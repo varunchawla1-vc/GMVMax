@@ -131,6 +131,42 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 .insight .pe-net .pe-metric { display: inline-block; padding: 0 4px; margin: 0 1px; border-radius: 4px; background: transparent; font-variant-numeric: tabular-nums; font-weight: 600; }
 .insight .pe-net .pe-metric.up   { color: var(--green); }
 .insight .pe-net .pe-metric.down { color: var(--accent2); }
+.insight .pe-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.insight .pe-tip .pe-tip-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); color: var(--text-dim);
+  font-size: 10px; font-weight: 700; font-style: italic; font-family: Georgia,serif;
+  cursor: help; user-select: none;
+  transition: background .15s, color .15s;
+}
+.insight .pe-tip:hover .pe-tip-ico,
+.insight .pe-tip:focus-within .pe-tip-ico {
+  background: rgba(245,166,35,0.25); color: #f5a623;
+}
+.insight .pe-tip .pe-tip-body {
+  position: absolute; left: 0; top: calc(100% + 6px);
+  width: 280px; max-width: 80vw;
+  background: #14161f; border: 1px solid rgba(245,166,35,0.3);
+  border-left: 3px solid #f5a623;
+  border-radius: 8px; padding: 10px 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  font-size: 11.5px; line-height: 1.5; color: var(--text-dim);
+  font-weight: 400; font-style: italic; letter-spacing: 0; text-transform: none;
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity .15s, transform .15s, visibility .15s;
+  z-index: 60; text-align: left;
+}
+.insight .pe-tip .pe-tip-body b { color: #f5a623; font-style: normal; font-weight: 700; letter-spacing: 0.2px; }
+.insight .pe-tip:hover .pe-tip-body,
+.insight .pe-tip:focus-within .pe-tip-body { opacity: 1; visibility: visible; transform: translateY(0); }
+
 
 
 /* Two-column layout */
@@ -486,7 +522,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           <h3>📊 Your P&amp;L — live</h3>
           <div class="kpis" id="kpiGrid">
             <div class="kpi" id="kpi_gmv">
-              <div class="k-lbl" style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">Daily GMV<span class="tip-wrap tip-sm" tabindex="0" aria-label="GMV growth caveat"><span class="tip-icon">i</span><span class="tip-box" role="tooltip"><span class="tip-title">ℹ️ Modelled GMV, not guaranteed</span><span class="tip-text">This figure assumes the platform hits the new RoI target exactly. Actual GMV growth depends on factors outside the offer — <b>creative supply</b>, <b>auction competition</b>, <b>inventory / stock availability</b>, <b>pricing</b>, seasonality and audience reach. Treat this as a directional estimate, not a guarantee.</span></span></span></div>
+              <div class="k-lbl" style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">Daily GMV<span class="tip-wrap tip-sm" tabindex="0" aria-label="GMV growth caveat"><span class="tip-icon">i</span><span class="tip-box" role="tooltip"><span class="tip-title">ℹ️ Modelled GMV, not guaranteed</span><span class="tip-text">Assumes GMV grows in line with the budget increase. Actual GMV also depends on factors beyond the commission offer — <b>creative</b>, <b>auction</b>, <b>inventory</b>, <b>pricing</b>, <b>seasonality</b>, <b>reach</b>. Directional estimate, not a guarantee.</span></span></span></div>
               <div class="k-val" id="v_gmv">$14,286</div>
               <div class="k-d" id="d_gmv">▲ +43% vs $10,000</div>
             </div>
@@ -534,7 +570,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="stage">
           <h3>📋 Line-by-line</h3>
           <div class="pnl header"><div>Metric</div><div>Before</div><div>After</div><div>Change</div></div>
-          <div class="pnl"><div class="label" style="display:flex; align-items:center; gap:6px;">💰 Daily GMV<span class="tip-wrap tip-sm" tabindex="0" aria-label="GMV growth caveat"><span class="tip-icon">i</span><span class="tip-box" role="tooltip"><span class="tip-title">ℹ️ Modelled GMV, not guaranteed</span><span class="tip-text">This figure assumes the platform hits the new RoI target exactly. Actual GMV growth depends on factors outside the offer — <b>creative supply</b>, <b>auction competition</b>, <b>inventory / stock availability</b>, <b>pricing</b>, seasonality and audience reach. Treat this as a directional estimate, not a guarantee.</span></span></span></div><div class="v" id="t_gmv_b"></div><div class="v after" id="t_gmv_a"></div><div class="v delta" id="t_gmv_d"></div></div>
+          <div class="pnl"><div class="label" style="display:flex; align-items:center; gap:6px;">💰 Daily GMV<span class="tip-wrap tip-sm" tabindex="0" aria-label="GMV growth caveat"><span class="tip-icon">i</span><span class="tip-box" role="tooltip"><span class="tip-title">ℹ️ Modelled GMV, not guaranteed</span><span class="tip-text">Assumes GMV grows in line with the budget increase. Actual GMV also depends on factors beyond the commission offer — <b>creative</b>, <b>auction</b>, <b>inventory</b>, <b>pricing</b>, <b>seasonality</b>, <b>reach</b>. Directional estimate, not a guarantee.</span></span></span></div><div class="v" id="t_gmv_b"></div><div class="v after" id="t_gmv_a"></div><div class="v delta" id="t_gmv_d"></div></div>
           <div class="pnl"><div class="label">✅ Daily Profit</div><div class="v" id="t_pf_b"></div><div class="v after" id="t_pf_a"></div><div class="v delta" id="t_pf_d"></div></div>
           <div class="pnl"><div class="label">📊 Profit Margin</div><div class="v" id="t_mg_b"></div><div class="v after" id="t_mg_a"></div><div class="v delta" id="t_mg_d"></div></div>
           <div class="pnl"><div class="label">🎯 RoI Target</div><div class="v" id="t_ri_b"></div><div class="v after" id="t_ri_a"></div><div class="v delta" id="t_ri_d"></div></div>
@@ -553,7 +589,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 <section class="section" id="s2">
   <div class="section-inner">
     <div class="step-badge">Step 2 · Should you opt in?</div>
-    <h2>When does this work for you?</h2>
+    <h2>Will this work for you?</h2>
     <p class="subtitle">Based on the numbers <b>you</b> entered, here's the verdict.</p>
 
     <div id="verdictBox" class="verdict good">
@@ -565,7 +601,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="check-row" id="chk1">
           <div class="icon" id="chk1_icon">✅</div>
           <div>
-            <b>Can you afford to spend more on ads?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk1_text" role="tooltip"></span></span>
+            <b>Do you have the flexibility to spend more on ads?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk1_text" role="tooltip"></span></span>
             
           </div>
           <div class="status ok" id="chk1_status">OK</div>
@@ -574,7 +610,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="check-row" id="chk3">
           <div class="icon" id="chk3_icon">⚠</div>
           <div>
-            <b>Are you OK with a thinner margin?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk3_text" role="tooltip"></span></span>
+            <b>Does your business support the margin compression?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk3_text" role="tooltip"></span></span>
             
           </div>
           <div class="status warn" id="chk3_status">ACCEPT</div>
@@ -632,7 +668,6 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
     <li>Actual results depend on creative supply, auction competition, inventory &amp; stock, pricing, seasonality, audience reach and platform algorithm behaviour.</li>
     <li>The platform's RoI target is a goal, not a guarantee — realised RoI may differ.</li>
     <li>Commission terms, eligibility, and availability are subject to TikTok Shop's official offer and may change without notice.</li>
-    <li>Consult your TikTok account team and your own finance function before acting on these figures.</li>
   </ul>
 </footer>
 
@@ -913,7 +948,12 @@ function render(){
       '</p>' +
       '<div class="pe-net">' +
         '<span class="pe-net-icon">⚡</span>' +
-        '<span><span class="pe-net-label">Net effect</span>' +
+        '<span><span class="pe-net-label">Net effect</span>'+
+        '<span class="pe-tip" tabindex="0"><span class="pe-tip-ico">i</span>'+
+          '<span class="pe-tip-body" role="tooltip"><b>Illustrative model.</b> '+
+          'GMV, profit and margin figures are modelled assumptions — not forecasts or guarantees. '+
+          'Realised RoI, traffic uplift and commission terms can vary.</span>'+
+        '</span> ' +
         'GMV <span class="pe-metric ' + gmvSign + '">' + pct(r.dGMV) + '</span>' +
         '· Profit <span class="pe-metric ' + profitSign + '">' + pct(r.dProfit) + '</span>' +
         '· Margin <span class="pe-metric ' + marginSign + '">' + marginTxt + '</span></span>' +
