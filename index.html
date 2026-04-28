@@ -170,7 +170,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 
 
 /* Two-column layout */
-.split { display:grid; grid-template-columns:420px 1fr; gap:16px; align-items:start; }
+.split { display:grid; grid-template-columns:420px 1fr; gap:16px; align-items:center; }
 @media (max-width:980px){ .split{ grid-template-columns:1fr; } }
 
 /* Input rows */
@@ -234,6 +234,91 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 .pnl .v.delta.up { color:var(--green); font-weight:700; }
 .pnl .v.delta.down { color:var(--red); font-weight:700; }
 .pnl.highlight { border-color:rgba(0,206,201,.5); background:rgba(0,206,201,.06); }
+/* ------- Unified Before vs After dashboard (v67) ------- */
+.dash-table { display: flex; flex-direction: column; gap: 4px; }
+.dash-head, .dash-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.9fr 0.9fr 2.2fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+}
+.dash-row > .dash-v.delta { text-align: center; }
+.dash-head {
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 4px;
+}
+.dash-head .ta-r { text-align: right; }
+.dash-head .ta-c { text-align: center; }
+.dash-row {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  transition: background .15s;
+}
+.dash-row:hover { background: rgba(255,255,255,0.035); }
+.dash-lbl { font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+.dash-v {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.dash-v.after { color: var(--accent); font-weight: 700; }
+.dash-v.delta { font-weight: 700; }
+.dash-v.delta.up   { color: var(--green); }
+.dash-v.delta.down { color: var(--red); }
+.dash-v.delta.flat { color: var(--text-dim); }
+
+/* Mini bar: two stacked horizontal bars */
+.dash-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 2px 0;
+}
+.dash-bar .db-before, .dash-bar .db-after {
+  display: block;
+  height: 8px;
+  border-radius: 3px;
+  min-width: 2px;
+  transition: width .35s cubic-bezier(.2,.7,.3,1);
+}
+.dash-bar .db-before { background: #4a4e5e; }
+.dash-bar .db-after  { background: var(--accent); box-shadow: 0 0 8px rgba(0,206,201,0.3); }
+
+.dash-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.dash-legend .dot {
+  display: inline-block; width: 10px; height: 10px;
+  border-radius: 2px; margin-right: 6px; vertical-align: middle;
+}
+
+/* Narrow-screen fallback: collapse Before/After into the bar row */
+@media (max-width: 720px) {
+  .dash-head, .dash-row {
+    grid-template-columns: 1.4fr 1.4fr 0.8fr;
+    gap: 8px;
+  }
+  .dash-head > div:nth-child(2),
+  .dash-head > div:nth-child(3),
+  .dash-row > .dash-v:not(.delta):not(.after),
+  .dash-row > .dash-v.after { display: none; }
+}
+
 
 /* Verdict — RAG (red/amber/green) color-coded */
 .verdict { padding:16px 20px 16px 22px; border-radius:14px; font-size:16px; line-height:1.55;
@@ -549,32 +634,57 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           </div>
         </div>
 
-        <!-- Comparison chart -->
+        <!-- Unified Before vs After dashboard -->
         <div class="stage">
-          <h3>📈 Before vs After (relative scale)</h3>
-          <div class="chart-wrap">
-            <div class="chart-group" id="chartBars">
-              <!-- populated by JS -->
+          <h3>📊 Before vs After — the numbers</h3>
+          <div class="dash-table">
+            <div class="dash-head">
+              <div>Metric</div>
+              <div class="ta-r">Before</div>
+              <div class="ta-r">After</div>
+              <div class="ta-c">Comparison</div>
+              <div class="ta-c">Change</div>
             </div>
-            <div class="chart-labels">
-              <div>GMV</div><div>Profit</div><div>Margin</div><div>RoI</div><div>Ads Spend</div>
+            <div class="dash-row">
+              <div class="dash-lbl">💰 Daily GMV<span class="tip-wrap tip-sm" tabindex="0" aria-label="GMV growth caveat"><span class="tip-icon">i</span><span class="tip-box" role="tooltip"><span class="tip-title">ℹ️ Modelled GMV, not guaranteed</span><span class="tip-text">Assumes GMV grows in line with the budget increase. Actual GMV also depends on factors beyond the commission offer — <b>creative</b>, <b>auction</b>, <b>inventory</b>, <b>pricing</b>, <b>seasonality</b>, <b>reach</b>. Directional estimate, not a guarantee.</span></span></span></div>
+              <div class="dash-v" id="t_gmv_b"></div>
+              <div class="dash-v after" id="t_gmv_a"></div>
+              <div class="dash-bar"><span class="db-before" id="bar_gmv_b"></span><span class="db-after" id="bar_gmv_a"></span></div>
+              <div class="dash-v delta" id="t_gmv_d"></div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-lbl">✅ Daily Profit</div>
+              <div class="dash-v" id="t_pf_b"></div>
+              <div class="dash-v after" id="t_pf_a"></div>
+              <div class="dash-bar"><span class="db-before" id="bar_pf_b"></span><span class="db-after" id="bar_pf_a"></span></div>
+              <div class="dash-v delta" id="t_pf_d"></div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-lbl">📊 Profit Margin</div>
+              <div class="dash-v" id="t_mg_b"></div>
+              <div class="dash-v after" id="t_mg_a"></div>
+              <div class="dash-bar"><span class="db-before" id="bar_mg_b"></span><span class="db-after" id="bar_mg_a"></span></div>
+              <div class="dash-v delta" id="t_mg_d"></div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-lbl">🎯 RoI Target</div>
+              <div class="dash-v" id="t_ri_b"></div>
+              <div class="dash-v after" id="t_ri_a"></div>
+              <div class="dash-bar"><span class="db-before" id="bar_ri_b"></span><span class="db-after" id="bar_ri_a"></span></div>
+              <div class="dash-v delta" id="t_ri_d"></div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-lbl">💵 Daily Ads Spend</div>
+              <div class="dash-v" id="t_bd_b"></div>
+              <div class="dash-v after" id="t_bd_a"></div>
+              <div class="dash-bar"><span class="db-before" id="bar_bd_b"></span><span class="db-after" id="bar_bd_a"></span></div>
+              <div class="dash-v delta" id="t_bd_d"></div>
+            </div>
+            <div class="dash-legend">
+              <span><span class="dot" style="background:#4a4e5e"></span>Before</span>
+              <span><span class="dot" style="background:var(--accent)"></span>After (with commission saving offer)</span>
             </div>
           </div>
-          <div class="chart-legend">
-            <span><span class="dot" style="background:#4a4e5e"></span>Before</span>
-            <span><span class="dot" style="background:var(--accent)"></span>After (with feature)</span>
-          </div>
-        </div>
-
-        <!-- Summary table -->
-        <div class="stage">
-          <h3>📋 Line-by-line</h3>
-          <div class="pnl header"><div>Metric</div><div>Before</div><div>After</div><div>Change</div></div>
-          <div class="pnl"><div class="label" style="display:flex; align-items:center; gap:6px;">💰 Daily GMV<span class="tip-wrap tip-sm" tabindex="0" aria-label="GMV growth caveat"><span class="tip-icon">i</span><span class="tip-box" role="tooltip"><span class="tip-title">ℹ️ Modelled GMV, not guaranteed</span><span class="tip-text">Assumes GMV grows in line with the budget increase. Actual GMV also depends on factors beyond the commission offer — <b>creative</b>, <b>auction</b>, <b>inventory</b>, <b>pricing</b>, <b>seasonality</b>, <b>reach</b>. Directional estimate, not a guarantee.</span></span></span></div><div class="v" id="t_gmv_b"></div><div class="v after" id="t_gmv_a"></div><div class="v delta" id="t_gmv_d"></div></div>
-          <div class="pnl"><div class="label">✅ Daily Profit</div><div class="v" id="t_pf_b"></div><div class="v after" id="t_pf_a"></div><div class="v delta" id="t_pf_d"></div></div>
-          <div class="pnl"><div class="label">📊 Profit Margin</div><div class="v" id="t_mg_b"></div><div class="v after" id="t_mg_a"></div><div class="v delta" id="t_mg_d"></div></div>
-          <div class="pnl"><div class="label">🎯 RoI Target</div><div class="v" id="t_ri_b"></div><div class="v after" id="t_ri_a"></div><div class="v delta" id="t_ri_d"></div></div>
-          <div class="pnl"><div class="label">💵 Daily Ads Spend</div><div class="v" id="t_bd_b"></div><div class="v after" id="t_bd_a"></div><div class="v delta" id="t_bd_d"></div></div>
         </div>
 
       </div>
@@ -797,33 +907,25 @@ function setKPI(id, val, delta, isPP, positiveIsGood){
   $('d_' + id).textContent = arrow + (d>=0?'+':'') + d.toFixed(1) + (isPP?'pp':'%');
 }
 
-function buildChartBars(r){
-  // Five metrics: GMV, Profit, Margin, RoI, Budget. We normalize each pair so the tallest bar hits ~95% of 220px.
+function buildDashBars(r){
+  // Five metrics: GMV, Profit, Margin, RoI, Ads Spend. Per-row scaling: widest bar of the pair = 100%.
   var x = r.x;
   var pairs = [
-    { lbl:'GMV',    b:x.gmv0,     a:r.gmv1,    fmt:money },
-    { lbl:'Profit', b:r.profit0,  a:r.profit1, fmt:money },
-    { lbl:'Margin', b:r.margin0*100, a:r.margin1*100, fmt:function(v){return v.toFixed(1)+'%';} },
-    { lbl:'RoI',    b:x.roi0,     a:r.roi1,    fmt:function(v){return v.toFixed(1)+'×';} },
-    { lbl:'Ads Spend', b:x.cost0,    a:r.spend1,  fmt:money }
+    { key:'gmv', b:x.gmv0,         a:r.gmv1 },
+    { key:'pf',  b:r.profit0,      a:r.profit1 },
+    { key:'mg',  b:r.margin0*100,  a:r.margin1*100 },
+    { key:'ri',  b:x.roi0,         a:isFinite(r.roi1)?r.roi1:x.roi0 },
+    { key:'bd',  b:x.cost0,        a:r.spend1 }
   ];
-  var H = 220;
-  var html = '';
   pairs.forEach(function(p){
     var maxV = Math.max(Math.abs(p.b), Math.abs(p.a), 0.0001);
-    var hb = Math.max(4, Math.abs(p.b)/maxV * H);
-    var ha = Math.max(4, Math.abs(p.a)/maxV * H);
-    html +=
-      '<div class="bar-pair">' +
-        '<div class="bar before" style="height:'+hb+'px">' +
-          '<div class="bar-val">'+p.fmt(p.b)+'</div>' +
-        '</div>' +
-        '<div class="bar after" style="height:'+ha+'px">' +
-          '<div class="bar-val">'+p.fmt(p.a)+'</div>' +
-        '</div>' +
-      '</div>';
+    var wb = Math.max(2, Math.abs(p.b)/maxV * 100);
+    var wa = Math.max(2, Math.abs(p.a)/maxV * 100);
+    var eb = document.getElementById('bar_' + p.key + '_b');
+    var ea = document.getElementById('bar_' + p.key + '_a');
+    if (eb) eb.style.width = wb + '%';
+    if (ea) ea.style.width = wa + '%';
   });
-  $('chartBars').innerHTML = html;
 }
 
 function render(){
@@ -909,21 +1011,20 @@ function render(){
     var el = $(id); el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
   });
 
-  // Chart
-  buildChartBars(r);
+  // Unified dashboard (bars + numbers)
+  buildDashBars(r);
 
-  // Table
   $('t_gmv_b').textContent = money(x.gmv0);
   $('t_gmv_a').textContent = money(r.gmv1);
-  $('t_gmv_d').textContent = pct(r.dGMV); $('t_gmv_d').className = 'v delta ' + signClass(r.dGMV);
+  $('t_gmv_d').textContent = pct(r.dGMV); $('t_gmv_d').className = 'dash-v delta ' + signClass(r.dGMV);
   $('t_pf_b').textContent  = money(r.profit0); $('t_pf_a').textContent = money(r.profit1);
-  $('t_pf_d').textContent  = pct(r.dProfit); $('t_pf_d').className = 'v delta ' + signClass(r.dProfit);
+  $('t_pf_d').textContent  = pct(r.dProfit); $('t_pf_d').className = 'dash-v delta ' + signClass(r.dProfit);
   $('t_mg_b').textContent  = (r.margin0*100).toFixed(1)+'%'; $('t_mg_a').textContent = (r.margin1*100).toFixed(1)+'%';
-  $('t_mg_d').textContent  = (r.dMargin>=0?'+':'')+r.dMargin.toFixed(1)+'pp'; $('t_mg_d').className = 'v delta ' + signClass(r.dMargin);
+  $('t_mg_d').textContent  = (r.dMargin>=0?'+':'')+r.dMargin.toFixed(1)+'pp'; $('t_mg_d').className = 'dash-v delta ' + signClass(r.dMargin);
   $('t_ri_b').textContent  = x.roi0.toFixed(1)+'×'; $('t_ri_a').textContent = isFinite(r.roi1)?r.roi1.toFixed(1)+'×':'∞';
-  $('t_ri_d').textContent  = pct(r.dRoI); $('t_ri_d').className = 'v delta ' + signClass(r.dRoI);
+  $('t_ri_d').textContent  = pct(r.dRoI); $('t_ri_d').className = 'dash-v delta ' + signClass(r.dRoI);
   $('t_bd_b').textContent  = money(x.cost0); $('t_bd_a').textContent = money(r.spend1);
-  $('t_bd_d').textContent  = pct(r.dBudget); $('t_bd_d').className = 'v delta ' + signClass(r.dBudget);
+  $('t_bd_d').textContent  = pct(r.dBudget); $('t_bd_d').className = 'dash-v delta ' + signClass(r.dBudget);
 
   // Insight (plain English)
   if (!r.qualifies) {
