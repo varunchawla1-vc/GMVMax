@@ -324,6 +324,36 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 #s2 .check-row { padding: 7px 12px; margin-bottom: 4px; font-size: 12.5px; }
 #s2 .check-row .icon { font-size: 16px; }
 #s2 .check-row .status { font-size: 10.5px; padding: 2px 8px; }
+/* ------- Step 2 check-row tooltips (v56) ------- */
+#s2 .check-row { grid-template-columns: 44px 1fr auto auto; }
+#s2 .ck-tip { position: relative; display: inline-flex; align-items: center; margin-left: 8px; }
+#s2 .ck-tip .tip-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); color: var(--text-dim);
+  font-size: 11px; font-weight: 700; font-style: italic; font-family: Georgia,serif;
+  cursor: help; user-select: none; transition: background .15s, color .15s;
+}
+#s2 .ck-tip:hover .tip-ico, #s2 .ck-tip:focus-within .tip-ico {
+  background: rgba(108,92,231,.28); color: #fff;
+}
+#s2 .ck-tip .tip-body {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  width: 320px; max-width: 80vw;
+  background: #14161f; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; padding: 12px 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  font-size: 12.5px; line-height: 1.55; color: var(--text-dim);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity .15s, transform .15s, visibility .15s;
+  z-index: 50; text-align: left; font-weight: 400;
+}
+#s2 .ck-tip:hover .tip-body, #s2 .ck-tip:focus-within .tip-body { opacity: 1; visibility: visible; transform: translateY(0); }
+#s2 .ck-tip .num { font-variant-numeric: tabular-nums; font-weight: 700; }
+#s2 .ck-tip .num.up   { color: #8ce99a; }
+#s2 .ck-tip .num.down { color: #ffc9c9; }
+#s2 .ck-tip .num.flat { color: #e0e3ea; }
+
 #s2 .check-row .ck-sub { font-size: 11.5px; margin-top: 1px; }
 </style>
 </head>
@@ -369,7 +399,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
   <div class="section-inner">
     <div class="step-badge">Step 1 · Interactive P&amp;L simulator</div>
     <h2>Model the tradeoff with your numbers</h2>
-    <p class="subtitle">All default values below are editable.</p>
+    <p class="subtitle">All values editable.</p>
 
     <div class="split">
       <!-- LEFT: inputs -->
@@ -377,20 +407,20 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="stage">
           <h3>Your business today</h3>
           <div class="inrow">
-            <div><div class="label">💵 Daily ad spend</div><div class="hint">What you spend on GMV Max today</div></div>
+            <div><div class="label">💵 Daily ad spend</div><div class="hint">Spend today</div></div>
             <input type="number" id="in_cost" value="1000" min="0" step="100"><div class="unit">$</div>
           </div>
           <div class="inrow">
-            <div><div class="label">🎯 Current RoI target</div><div class="hint">GMV per $1 of ads today</div></div>
+            <div><div class="label">🎯 Current RoI target</div><div class="hint">Today's RoI</div></div>
             <input type="number" id="in_roi" value="5" min="1" step="0.1"><div class="unit">×</div>
           </div>
           <div class="inrow" style="background:rgba(0,206,201,.06); border-color:rgba(0,206,201,.3);">
-            <div><div class="label">💰 Daily GMV <span style="color:var(--text-dim); font-weight:400;">(auto)</span></div><div class="hint">= Ad spend × RoI target</div></div>
+            <div><div class="label">💰 Daily GMV <span style="color:var(--text-dim); font-weight:400;">(auto)</span></div></div>
             <div style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:var(--accent); font-size:14px;" id="in_gmv_display">$10,000</div>
             <div class="unit"></div>
           </div>
           <div class="inrow">
-            <div><div class="label">🏷 Current platform commission</div><div class="hint">% TikTok Shop takes today</div></div>
+            <div><div class="label">🏷 Current platform commission</div><div class="hint">Today's %</div></div>
             <input type="number" id="in_comm" value="5" min="0" step="0.1"><div class="unit">%</div>
           </div>
           <div class="inrow">
@@ -401,7 +431,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 
         <div class="stage stage-offer">
           <h3 style="display:flex; align-items:center; gap:8px;">
-            The offer from the platform
+            The offer
             <span class="tip-wrap" tabindex="0" aria-label="Where to find these values">
               <span class="tip-icon">i</span>
               <span class="tip-box" role="tooltip">
@@ -418,12 +448,12 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
             </span>
           </h3>
           <div class="inrow">
-            <div><div class="label">🔻 Platform commission reduction</div><div class="hint">Reduction in platform commission</div></div>
+            <div><div class="label">🔻 Platform commission reduction</div></div>
             <input type="number" id="in_dc" value="1.5" min="0" step="0.1"><div class="unit">pp</div>
           </div>
           <div id="dc_cap_note" style="display:none; padding:4px 14px 6px; color:var(--accent2); font-size:11.5px; line-height:1.5;">⚠ Commission reduction can't meet or exceed your current commission — the floor is 0%. Reduction capped at <b id="dc_cap_val"></b> for this calculation.</div>
           <div class="inrow">
-            <div><div class="label">🎯 New RoI target</div><div class="hint">Offer RoI</div></div>
+            <div><div class="label">🎯 New RoI target</div></div>
             <input type="number" id="in_roi1" value="4.5" min="0.1" max="10" step="0.1"><div class="unit">×</div>
           </div>
           <div style="padding:6px 14px 10px; color:var(--text-dim); font-size:11.5px; line-height:1.5;">
@@ -435,18 +465,17 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           <div class="inrow" id="row_mult">
             <div>
               <div class="label">🚀 New daily ads spend</div>
-              <div class="hint">What the platform asks you to spend/day under this offer <span id="mult_callout" class="mult-callout">(2.0× your current $1,000)</span></div>
+              <div class="hint">Platform offer <span id="mult_callout" class="mult-callout">(2.0× your current $1,000)</span></div>
             </div>
             <input type="number" id="in_budget1" value="2000" min="0" step="100"><div class="unit">$</div>
           </div>
           <div class="toggle">
             <div>
               <div class="label"><span style="font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; font-size:1em; display:inline-block; width:1.2em;">⚙️</span> Auto Budget enabled?</div>
-              <div class="hint">Automatically increases your ads spend when the target RoI is hit and the spend limit is reached</div>
             </div>
             <label class="switch"><input type="checkbox" id="in_auto"><span class="slider"></span></label>
           </div>
-          <div style="padding:6px 14px 2px; color:var(--text-dim); font-size:11.5px; line-height:1.5; font-style:italic;">Offer activates only if the new daily ads spend is ≥ 2× current spend, or Auto Budget is ON.</div>
+          <div id="activation_note" style="margin:8px 14px 4px; padding:8px 12px; background:rgba(245,166,35,0.08); border-left:3px solid #f5a623; border-radius:6px; color:#f5a623; font-size:11.5px; line-height:1.45; font-style:normal; font-weight:500; display:none;"><span style="margin-right:6px;">⚠️</span>Offer activates when new spend ≥ 2× current, or Auto Budget is ON.</div>
         </div>
       </div>
 
@@ -536,8 +565,8 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="check-row" id="chk1">
           <div class="icon" id="chk1_icon">✅</div>
           <div>
-            <b>Can you afford to spend more on ads?</b>
-            <div style="color:var(--text-dim); font-size:12px; margin-top:2px;" id="chk1_text"></div>
+            <b>Can you afford to spend more on ads?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk1_text" role="tooltip"></span></span>
+            
           </div>
           <div class="status ok" id="chk1_status">OK</div>
         </div>
@@ -545,8 +574,8 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="check-row" id="chk3">
           <div class="icon" id="chk3_icon">⚠</div>
           <div>
-            <b>Are you OK with a thinner margin?</b>
-            <div style="color:var(--text-dim); font-size:12px; margin-top:2px;" id="chk3_text"></div>
+            <b>Are you OK with a thinner margin?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk3_text" role="tooltip"></span></span>
+            
           </div>
           <div class="status warn" id="chk3_status">ACCEPT</div>
         </div>
@@ -554,8 +583,8 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
         <div class="check-row" id="chk4">
           <div class="icon" id="chk4_icon">✅</div>
           <div>
-            <b>Does absolute profit actually grow?</b>
-            <div style="color:var(--text-dim); font-size:12px; margin-top:2px;" id="chk4_text"></div>
+            <b>Does absolute profit actually grow?</b><span class="ck-tip" tabindex="0"><span class="tip-ico">i</span><span class="tip-body" id="chk4_text" role="tooltip"></span></span>
+            
           </div>
           <div class="status ok" id="chk4_status">YES</div>
         </div>
@@ -787,6 +816,12 @@ function render(){
         }
       }
     }
+    // Activation note: only show when Auto Budget is OFF AND new spend < 2× current
+    var noteEl = document.getElementById('activation_note');
+    if (noteEl) {
+      var showNote = !autoOn && (c <= 0 || b <= 0 || (b / c) < 1.995);
+      noteEl.style.display = showNote ? 'block' : 'none';
+    }
   })();
   var r = compute(), x = r.x;
 
@@ -913,21 +948,21 @@ function render(){
   var ch1ok, ch1status, ch1icon, ch1text;
   if (NOT_QUALIFIED) {
     ch1ok='no'; ch1status='NOT QUALIFIED'; ch1icon='⛔';
-    ch1text = "Your daily ads spend of " + money(r.spend1Proposed) + "/day is only " + proposedMult.toFixed(2) +
-      "× current — below the 2× platform floor. The feature does not trigger, so your P&L stays at baseline. Raise the daily ads spend to at least 2× your current spend (or switch on Auto Budget) to activate the offer.";
+    ch1text = "Daily ads spend of <span class='num down'>" + money(r.spend1Proposed) + "/day</span> is only <span class='num down'>" + proposedMult.toFixed(2) +
+      "×</span> current — below the <span class='num'>2×</span> platform floor. Feature doesn't trigger; P&L stays at baseline. Raise spend to ≥2× current or switch on Auto Budget to activate.";
   } else if (NEUTRAL) {
     ch1ok='flat'; ch1status='N/A'; ch1icon='•';
-    ch1text = "Ads spend stays at " + money(x.cost0) + "/day. Nothing to confirm until you enter an offer.";
+    ch1text = "Ads spend stays at <span class='num flat'>" + money(x.cost0) + "/day</span>. Nothing to confirm until you enter an offer.";
   } else if (x.auto) {
     ch1ok='ok'; ch1status='QUALIFIED'; ch1icon='✅';
-    ch1text = "Auto Budget is ON, so the platform will increment spends automatically.";
+    ch1text = "Auto Budget is <span class='num up'>ON</span> — platform will increment spend automatically.";
   } else {
     ch1ok='ok'; ch1status='QUALIFIED'; ch1icon='✅';
-    ch1text = "Auto Budget is OFF, so the platform will spend up to " + money(r.spend1) +
-      "/day (" + budgetMult.toFixed(1) + "× your current " + money(x.cost0) +
-      "), based on the multiplier you set in Step 1. 2× floor met — offer activates.";
+    ch1text = "Auto Budget is OFF. Platform will spend up to <span class='num up'>" + money(r.spend1) +
+      "/day</span> (<span class='num up'>" + budgetMult.toFixed(1) + "×</span> your current <span class='num flat'>" + money(x.cost0) +
+      "</span>). <span class='num up'>2×</span> floor met — offer activates.";
   }
-  $('chk1_text').textContent = ch1text;
+  $('chk1_text').innerHTML = ch1text;
   $('chk1_icon').textContent = ch1icon;
   $('chk1_status').textContent = ch1status;
   $('chk1_status').className = 'status ' + (ch1ok==='ok'?'ok':(ch1ok==='warn'?'warn':(ch1ok==='no'?'no':'warn')));
@@ -938,10 +973,10 @@ function render(){
   var ch3ok, ch3status, ch3icon, ch3desc;
   if (NOT_QUALIFIED) {
     ch3ok='flat'; ch3status='UNCHANGED'; ch3icon='•';
-    ch3desc = "Offer didn\'t trigger — margin stays at " + (r.margin0*100).toFixed(1) + "%.";
+    ch3desc = "Offer didn\'t trigger — margin stays at <span class='num flat'>" + (r.margin0*100).toFixed(1) + "%</span>.";
   } else if (NEUTRAL) {
     ch3ok='flat'; ch3status='N/A'; ch3icon='•';
-    ch3desc = "No change — margin stays at " + (r.margin0*100).toFixed(1) + "%.";
+    ch3desc = "No change — margin stays at <span class='num flat'>" + (r.margin0*100).toFixed(1) + "%</span>.";
   } else if (r.margin1 <= 0) {
     ch3ok='no';   ch3status='UNVIABLE'; ch3icon='❌'; ch3desc = "Margin goes to zero or negative — you lose money on every sale. Hard no-go.";
   } else if (r.dMargin > 0.05) {
@@ -954,8 +989,9 @@ function render(){
   } else {
     ch3ok='no';   ch3status='HEAVY';   ch3icon='❌'; ch3desc = "Heavy compression — check whether volume uplift justifies it.";
   }
-  $('chk3_text').textContent = "Margin moves from " + (r.margin0*100).toFixed(1) + "% to " +
-    (r.margin1*100).toFixed(1) + "% (" + (r.dMargin>=0?'+':'') + r.dMargin.toFixed(1) + "pp). " + ch3desc;
+  var ch3DirCls = (r.dMargin > 0.01 ? 'up' : (r.dMargin < -0.01 ? 'down' : 'flat'));
+  $('chk3_text').innerHTML = "Margin moves from <span class='num flat'>" + (r.margin0*100).toFixed(1) + "%</span> to <span class='num " + ch3DirCls + "'>" +
+    (r.margin1*100).toFixed(1) + "%</span> (<span class='num " + ch3DirCls + "'>" + (r.dMargin>=0?'+':'') + r.dMargin.toFixed(1) + "pp</span>). " + ch3desc;
   $('chk3_icon').textContent = ch3icon;
   $('chk3_status').textContent = ch3status;
   $('chk3_status').className = 'status ' + (ch3ok==='flat'?'warn':ch3ok);
@@ -965,7 +1001,7 @@ function render(){
   var ch4ok, ch4status, ch4icon, ch4desc;
   if (NOT_QUALIFIED) {
     ch4ok='flat'; ch4status='UNCHANGED'; ch4icon='•';
-    ch4desc = "Offer didn\'t trigger — profit stays at " + money(r.profit0) + "/day.";
+    ch4desc = "Offer didn\'t trigger — profit stays at <span class='num flat'>" + money(r.profit0) + "/day</span>.";
   } else if (NEUTRAL) {
     ch4ok='flat'; ch4status='N/A'; ch4icon='•';
     ch4desc = "You haven\'t entered an offer yet — no profit change to evaluate.";
@@ -978,7 +1014,7 @@ function render(){
   } else if (absProfitDelta > 0) {
     // baseline was unprofitable; positive delta is actually great news
     ch4ok='ok'; ch4status='IMPROVES'; ch4icon='✅';
-    ch4desc = "Profit improves by " + money(absProfitDelta) + "/day — moves you toward profitability.";
+    ch4desc = "Profit improves by <span class='num up'>" + money(absProfitDelta) + "/day</span> — moves you toward profitability.";
   } else if (Math.abs(absProfitDelta) < 0.5) {
     ch4ok='flat'; ch4status='FLAT'; ch4icon='•';
     ch4desc = "Profit barely moves — essentially break-even.";
@@ -986,8 +1022,9 @@ function render(){
     ch4ok='no'; ch4status='NO'; ch4icon='❌';
     ch4desc = "Profit falls — the higher ads take-rate outweighs the commission saving.";
   }
-  $('chk4_text').textContent = "Daily profit moves from " + money(r.profit0) + " to " + money(r.profit1) +
-    " — that\'s " + (absProfitDelta>=0?'+':'−') + money(Math.abs(absProfitDelta)) + "/day. " + ch4desc;
+  var ch4DirCls = (absProfitDelta > 0.5 ? 'up' : (absProfitDelta < -0.5 ? 'down' : 'flat'));
+  $('chk4_text').innerHTML = "Daily profit moves from <span class='num flat'>" + money(r.profit0) + "</span> to <span class='num " + ch4DirCls + "'>" + money(r.profit1) +
+    "</span> — that\'s <span class='num " + ch4DirCls + "'>" + (absProfitDelta>=0?'+':'−') + money(Math.abs(absProfitDelta)) + "/day</span>. " + ch4desc;
   $('chk4_icon').textContent = ch4icon;
   $('chk4_status').textContent = ch4status;
   $('chk4_status').className = 'status ' + (ch4ok==='flat'?'warn':ch4ok);
