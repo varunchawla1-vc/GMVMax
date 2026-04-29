@@ -416,6 +416,45 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
     0 0 0 1px rgba(0,206,201,0.08) inset,
     0 6px 22px rgba(0,206,201,0.06);
 }
+.stage.stage-offer.offer-inactive { opacity:0.6; }
+.stage.stage-offer.offer-inactive .inrow,
+.stage.stage-offer.offer-inactive .toggle,
+.stage.stage-offer.offer-inactive #activation_note,
+.stage.stage-offer.offer-inactive #dc_cap_note { pointer-events:none; filter:grayscale(0.3); }
+.stage.stage-offer.offer-inactive input[type="number"],
+.stage.stage-offer.offer-inactive input[type="checkbox"]:not(#in_offer_active) { pointer-events:none; opacity:0.55; }
+.offer-master-toggle {
+  display:flex; align-items:center; justify-content:space-between;
+  margin:4px 14px 10px; padding:10px 12px;
+  background:rgba(80,227,194,0.10);
+  border:1px solid rgba(80,227,194,0.30);
+  border-radius:8px;
+}
+.stage.stage-offer.offer-inactive .offer-master-toggle {
+  background: rgba(80,227,194,0.14);
+  border-color: rgba(80,227,194,0.55);
+  opacity: 1;
+  pointer-events: auto;
+  animation: offerPulse 1.8s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(80,227,194,0.55);
+}
+.stage.stage-offer.offer-inactive .offer-master-toggle .label {
+  color: #50e3c2;
+}
+@keyframes offerPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(80,227,194,0.55); border-color: rgba(80,227,194,0.55); }
+  60%  { box-shadow: 0 0 0 10px rgba(80,227,194,0.00); border-color: rgba(80,227,194,0.90); }
+  100% { box-shadow: 0 0 0 0   rgba(80,227,194,0.00); border-color: rgba(80,227,194,0.55); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage.stage-offer.offer-inactive .offer-master-toggle { animation: none; }
+}
+.stage.stage-offer.offer-inactive .offer-master-toggle input,
+.stage.stage-offer.offer-inactive .offer-master-toggle .switch,
+.stage.stage-offer.offer-inactive .offer-master-toggle .slider { pointer-events:auto; opacity:1; }
+.offer-master-toggle .label { font-weight:600; color:var(--text); font-size:13px; }
+.offer-master-toggle .hint-sm { color:var(--text-dim); font-size:11px; margin-top:2px; }
+
 .stage.stage-offer:hover {
   border-color: rgba(0,206,201,0.5);
   box-shadow:
@@ -568,14 +607,21 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
               </span>
             </span>
           </h3>
+          <div class="offer-master-toggle">
+            <div>
+              <div class="label">Offer active</div>
+              <div class="hint-sm">Toggle on to model an offer. Metrics stay at baseline until all inputs are filled.</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="in_offer_active"><span class="slider"></span></label>
+          </div>
           <div class="inrow">
             <div><div class="label">🔻 Platform commission reduction</div></div>
-            <input type="number" id="in_dc" value="1.5" min="0" step="0.1"><div class="unit">pp</div>
+            <input type="number" id="in_dc" value="" placeholder="1.5" min="0" step="0.1"><div class="unit">pp</div>
           </div>
           <div id="dc_cap_note" style="display:none; padding:4px 14px 6px; color:var(--accent2); font-size:11.5px; line-height:1.5;">⚠ Commission reduction can't meet or exceed your current commission — the floor is 0%. Reduction capped at <b id="dc_cap_val"></b> for this calculation.</div>
           <div class="inrow">
             <div><div class="label">🎯 New RoI target</div></div>
-            <input type="number" id="in_roi1" value="4.5" min="0.1" max="10" step="0.1"><div class="unit">×</div>
+            <input type="number" id="in_roi1" value="" placeholder="4.5" min="0.1" max="10" step="0.1"><div class="unit">×</div>
           </div>
           <div style="padding:6px 14px 10px; color:var(--text-dim); font-size:11.5px; line-height:1.5;">
             ↓ RoI reduction: <b id="txt_droi" style="color:var(--accent2)">−2.9×</b> &nbsp;·&nbsp;
@@ -586,9 +632,9 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           <div class="inrow" id="row_mult">
             <div>
               <div class="label">🚀 New daily ads spend</div>
-              <div class="hint">Platform offer <span id="mult_callout" class="mult-callout">(2.0× your current $1,000)</span></div>
+              <div class="hint">Platform offer <span id="mult_callout" class="mult-callout">(enter the value shown in TTAM for this campaign)</span></div>
             </div>
-            <input type="number" id="in_budget1" value="2000" min="0" step="100"><div class="unit">$</div>
+            <input type="number" id="in_budget1" value="" placeholder="2000" min="1000" step="100"><div class="unit">$</div>
           </div>
           <div class="toggle">
             <div>
@@ -596,7 +642,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
             </div>
             <label class="switch"><input type="checkbox" id="in_auto"><span class="slider"></span></label>
           </div>
-          <div id="activation_note" style="margin:8px 14px 4px; padding:8px 12px; background:rgba(245,166,35,0.08); border-left:3px solid #f5a623; border-radius:6px; color:#f5a623; font-size:11.5px; line-height:1.45; font-style:normal; font-weight:500; display:none;"><span style="margin-right:6px;">⚠️</span>Offer activates when new spend ≥ 2× current, or Auto Budget is ON.</div>
+          <div id="activation_note" style="margin:8px 14px 4px; padding:8px 12px; background:rgba(245,166,35,0.08); border-left:3px solid #f5a623; border-radius:6px; color:#f5a623; font-size:11.5px; line-height:1.45; font-style:normal; font-weight:500; display:none;"><span style="margin-right:6px;">⚠️</span>New spend must be ≥ budget shown in TTAM offer.</div>
         </div>
       </div>
 
@@ -815,7 +861,8 @@ var signClass = function(n){ return n>0.05?'up':(n<-0.05?'down':'flat'); };
 function read(){
   var cost0 = +$('in_cost').value || 0;
   var roi0  = +$('in_roi').value  || 1;
-  var roi1_raw = +$('in_roi1').value || roi0;
+  var _offerActive = !!($('in_offer_active') && $('in_offer_active').checked);
+  var roi1_raw = _offerActive ? (+$('in_roi1').value || roi0) : roi0;
   // New RoI must always be <= current RoI (you can't raise RoI and also receive a commission reduction)
   var roi1  = Math.min(roi1_raw, roi0);
   // Reflect the clamp back into the input so the user sees it
@@ -833,12 +880,28 @@ function read(){
     dc:    (+$('in_dc').value   || 0) / 100,
     auto:  $('in_auto').checked,
     budget1: +$('in_budget1').value || 0,
-    mult:  (function(){ var c=+$('in_cost').value||0; var b=+$('in_budget1').value||0; return c>0 ? b/c : 0; })()
+    mult:  (function(){ var c=+$('in_cost').value||0; var b=+$('in_budget1').value||0; return c>0 ? b/c : 0; })(),
+    offerActive: _offerActive,
+    _dcRaw: ($('in_dc').value || '').trim(),
+    _roi1Raw: ($('in_roi1').value || '').trim(),
+    _budget1Raw: ($('in_budget1').value || '').trim()
   };
 }
 
 function compute(){
   var x = read();
+  // v70 baseline gate: if toggle off OR required inputs missing, force neutral x.
+  var _autoOn = x.auto === true;
+  var _reqOk = (x._dcRaw !== '' && x._roi1Raw !== '' && (_autoOn || (x._budget1Raw !== '' && (+x._budget1Raw) >= x.cost0)));
+  var _live = x.offerActive && _reqOk;
+  if (!_live) {
+    x.dc = 0;
+    x.budget1 = x.cost0;
+    x.mult = x.cost0 > 0 ? 1 : 0;
+    x.roi1IN = x.roi0;
+    x.droi = 0;
+  }
+  x._live = _live;
   var roi1IN = Math.max(0.01, x.roi1IN);   // client sets new RoI directly
   var adsTR0 = 1 / x.roi0;
   // Clamp the commission reduction so the new commission can never go below 0 (the floor).
@@ -847,25 +910,24 @@ function compute(){
   var dcCapped = x.dc > x.c0 + 1e-9;
 
   // Proposed new spend (what the client has set up in Step 1).
-  // If Auto Budget is ON, the platform guarantees a +100% uplift (2× current) —
-  // the manually entered "New daily ad budget" field is ignored.
+  // Auto Budget ON → conservative 1.5× placeholder (AB can lift 50–300% depending on campaign; 50% is the floor).
+  // Auto Budget OFF → whatever the user entered, floored at current daily spend (can't go lower).
+  var AB_CONSERVATIVE = 1.5;
   var spend1Proposed;
   if (x.auto) {
-    spend1Proposed = 2 * x.cost0;
+    spend1Proposed = AB_CONSERVATIVE * x.cost0;
   } else {
-    spend1Proposed = x.budget1;
+    spend1Proposed = Math.max(x.cost0, x.budget1);
   }
   var proposedMult = x.cost0 ? spend1Proposed / x.cost0 : 0;
 
-  // Platform rule: the offer only applies if the daily budget is at least 2× current cost
-  // (Auto Budget ON guarantees this; Auto Budget OFF depends on the manual multiplier).
-  // If the 2× floor is not met, the feature does NOT trigger — everything remains at baseline.
-  var qualifies = x.auto || (proposedMult >= 1.995);
+  // Eligibility: new spend ≥ current spend. (Actual TTAM eligibility is campaign-specific; this is the hard floor.)
+  var qualifies = true;
 
-  // Applied values (what actually happens)
-  var roi1   = qualifies ? roi1IN       : x.roi0;
-  var c1     = qualifies ? c1IN         : x.c0;
-  var spend1 = qualifies ? spend1Proposed : x.cost0;
+  // Applied values
+  var roi1   = roi1IN;
+  var c1     = c1IN;
+  var spend1 = spend1Proposed;
   var adsTR1 = 1 / roi1;
   var gmv1   = spend1 * roi1;
 
@@ -938,26 +1000,32 @@ function render(){
     var inp = $('in_budget1');
     if (el) {
       if (autoOn) {
-        // Auto Budget ON: manual entry ignored, platform uses +100% (2.0×) by default
-        var effBudget = c > 0 ? 2 * c : 0;
-        el.textContent = '(Auto Budget ON — budget assumed $' + effBudget.toLocaleString() + ' = 2.0× your current $' + c.toLocaleString() + '; this field is ignored)';
+        // Auto Budget ON: manual entry ignored, conservative 1.5× placeholder (AB lifts 50–300%)
+        var effBudget = c > 0 ? 1.5 * c : 0;
+        el.innerHTML = '(Auto Budget ON — assumed $' + effBudget.toLocaleString() + ' = 1.5× current; <span style="opacity:0.75;">AB can lift 50–300%</span>)';
         el.style.color = 'var(--accent)';
         if (inp) { inp.disabled = true; inp.style.opacity = '0.5'; }
       } else {
         if (inp) { inp.disabled = false; inp.style.opacity = '1'; }
+        // Enforce floor: new spend cannot be lower than current daily spend.
+        if (c > 0 && b > 0 && b < c) {
+          inp.value = c;
+          b = c;
+          inp.style.boxShadow = '0 0 0 2px rgba(229,115,115,0.45)';
+          setTimeout(function(){ inp.style.boxShadow = ''; }, 700);
+        }
         if (c <= 0 || b <= 0) { el.textContent = ''; }
         else {
           var m = b / c;
-          el.textContent = '(' + m.toFixed(1) + '× your current $' + c.toLocaleString() + ')';
-          el.style.color = (m >= 1.995) ? 'var(--accent)' : '#e57373';
+          el.textContent = '(' + m.toFixed(2) + '× your current $' + c.toLocaleString() + ')';
+          el.style.color = 'var(--accent)';
         }
       }
     }
-    // Activation note: only show when Auto Budget is OFF AND new spend < 2× current
+    // Activation note: show only when Auto Budget is OFF (reminds user the actual eligibility comes from TTAM)
     var noteEl = document.getElementById('activation_note');
     if (noteEl) {
-      var showNote = !autoOn && (c <= 0 || b <= 0 || (b / c) < 1.995);
-      noteEl.style.display = showNote ? 'block' : 'none';
+      noteEl.style.display = autoOn ? 'none' : 'block';
     }
   })();
   var r = compute(), x = r.x;
@@ -1027,12 +1095,8 @@ function render(){
   $('t_bd_d').textContent  = pct(r.dBudget); $('t_bd_d').className = 'dash-v delta ' + signClass(r.dBudget);
 
   // Insight (plain English)
-  if (!r.qualifies) {
-    $('tradeInsight').innerHTML =
-      '<p class="pe-para"><b>In plain English:</b> your daily ads spend is only ' + r.proposedMult.toFixed(2) +
-      '× current (' + money(r.spend1Proposed) + '/day) — below the 2× platform floor.</p>' +
-      '<p class="pe-para"><b>The offer does not apply</b>, so your GMV, profit, margin, RoI and ads spend <b>all stay at baseline</b>. ' +
-      'Raise your daily ads spend to at least 2× your current spend (or turn on Auto Budget) to activate the commission reduction and new RoI target.</p>';
+  if (false) {
+    // (qualifies is always true now; legacy branch preserved for structural symmetry)
   } else {
     var gmvSign    = r.dGMV    >= 0 ? 'up'   : 'down';
     var profitSign = r.dProfit >= 0 ? 'up'   : 'down';
@@ -1070,8 +1134,14 @@ function render(){
   //   NOT_QUALIFIED: 2× budget floor not met → feature doesn't trigger → everything stays baseline.
   //   NEUTRAL:       client hasn't entered an offer yet (dc=0 and new RoI = current RoI).
   //   LIVE:          offer is active.
-  var NOT_QUALIFIED = !r.qualifies;
-  var NEUTRAL = !NOT_QUALIFIED && (x.dc === 0) && (Math.abs(x.roi0 - r.roi1Proposed) < 1e-6);
+  var NOT_QUALIFIED = false; // deprecated: eligibility is now campaign-specific (TTAM), not a hard 2× floor
+  // v71: distinguish OFF (toggle off) from INCOMPLETE (toggle on but missing inputs) from NEUTRAL (legacy)
+  var OFFER_OFF = !x.offerActive;
+  var _hasDc = (x._dcRaw !== '' && (+x._dcRaw) > 0);
+  var _hasRoi = (x._roi1Raw !== '');
+  var _hasBudget = (x._budget1Raw !== '' && (+x._budget1Raw) > 0);
+  var INCOMPLETE = x.offerActive && !(_hasDc && _hasRoi && (x.auto || (_hasBudget && (+x._budget1Raw) >= x.cost0)));
+  var NEUTRAL = OFFER_OFF || INCOMPLETE || ((x.dc === 0) && (Math.abs(x.roi0 - r.roi1Proposed) < 1e-6));
 
   // Absolute dollar deltas are always reliable; percentage deltas are not when baseline is <=0 or 0.
   var absProfitDelta = r.profitDelta;                // $/day
@@ -1085,30 +1155,22 @@ function render(){
     dProfitSafe = (absProfitDelta >= 0 ? '+' : '−') + money(Math.abs(absProfitDelta)) + '/day';
   }
 
-  // ---------- Check 1: Budget uplift (gating condition) ----------
+  // ---------- Check 1: Spend uplift multiple (informational) ----------
   var ch1ok, ch1status, ch1icon, ch1text;
-  if (NOT_QUALIFIED) {
-    ch1ok='no'; ch1status='NOT QUALIFIED'; ch1icon='⛔';
-    ch1text = "Daily ads spend of <span class='num down'>" + money(r.spend1Proposed) + "/day</span> is only <span class='num down'>" + proposedMult.toFixed(2) +
-      "×</span> current — below the <span class='num'>2×</span> platform floor. Feature doesn't trigger; P&L stays at baseline. Raise spend to ≥2× current or switch on Auto Budget to activate.";
-  } else if (NEUTRAL) {
+  if (NEUTRAL) {
     ch1ok='flat'; ch1status='N/A'; ch1icon='•';
     ch1text = "Ads spend stays at <span class='num flat'>" + money(x.cost0) + "/day</span>. Nothing to confirm until you enter an offer.";
   } else if (x.auto) {
-    ch1ok='ok'; ch1status='QUALIFIED'; ch1icon='✅';
-    ch1text = "Auto Budget is <span class='num up'>ON</span> — platform will increment spend automatically.";
+    ch1ok='flat'; ch1status='INFO'; ch1icon='ℹ';
+    ch1text = "Auto Budget is <span class='num up'>ON</span>. Platform manages spend — we've modelled a conservative <span class='num up'>1.5×</span> lift (AB can raise 50–300% depending on campaign performance).";
   } else {
-    ch1ok='ok'; ch1status='QUALIFIED'; ch1icon='✅';
-    ch1text = "Auto Budget is OFF. Platform will spend up to <span class='num up'>" + money(r.spend1) +
-      "/day</span> (<span class='num up'>" + budgetMult.toFixed(1) + "×</span> your current <span class='num flat'>" + money(x.cost0) +
-      "</span>). <span class='num up'>2×</span> floor met — offer activates.";
+    ch1ok='flat'; ch1status='INFO'; ch1icon='ℹ';
+    ch1text = "You've set new spend at <span class='num up'>" + money(r.spend1) + "/day</span> — a <span class='num up'>" + budgetMult.toFixed(2) + "×</span> lift on your current <span class='num flat'>" + money(x.cost0) + "/day</span>. Actual eligibility is campaign-specific; confirm in TTAM.";
   }
   $('chk1_text').innerHTML = ch1text;
   $('chk1_icon').textContent = ch1icon;
   $('chk1_status').textContent = ch1status;
-  $('chk1_status').className = 'status ' + (ch1ok==='ok'?'ok':(ch1ok==='warn'?'warn':(ch1ok==='no'?'no':'warn')));
-  // flat -> grey-ish: reuse 'warn' color would mislead, use subtle ok-toned but keep label N/A
-  if (ch1ok==='flat') $('chk1_status').className = 'status warn';
+  $('chk1_status').className = 'status warn';
 
   // ---------- Check 3: Margin compression ----------
   var ch3ok, ch3status, ch3icon, ch3desc;
@@ -1173,13 +1235,28 @@ function render(){
   // ---------- Overall verdict ----------
   var vBox = $('verdictBox'), vText = $('verdictText');
   vBox.classList.remove('good','warn','bad');
-  if (NOT_QUALIFIED) {
-    vBox.classList.add('bad');
-    vText.innerHTML = '<b>Offer does not apply.</b> Your daily ads spend is ' + proposedMult.toFixed(2) +
-      '× current — below the 2× platform floor. The commission reduction and new RoI target will <b>not</b> activate, so your GMV, profit, margin, RoI and ads spend <b>all stay at baseline</b>. Raise the daily ads spend to at least 2× your current spend (or turn on Auto Budget) to qualify.';
+  if (false) {
+    // NOT_QUALIFIED branch deprecated (2× floor removed)
   } else if (NEUTRAL) {
     vBox.classList.add('warn');
-    vText.innerHTML = '<b>No offer entered yet.</b> Set a <i>commission reduction</i> and a <i>new RoI target</i> (lower than your current RoI) to see how the feature would move your P&L.';
+    if (OFFER_OFF) {
+      vText.innerHTML = '<b>Offer is off.</b> Toggle <i>Offer active</i> on and enter your offer details to see how the feature would move your P&L.';
+    } else if (INCOMPLETE) {
+      var _missing = [];
+      if (!_hasDc) _missing.push('commission reduction');
+      if (!_hasRoi) _missing.push('new RoI target');
+      if (!x.auto && (!_hasBudget || (+x._budget1Raw) < x.cost0)) {
+        if (!_hasBudget) _missing.push('new daily ads spend');
+        else _missing.push('new daily ads spend ≥ current daily spend');
+      }
+      var _list;
+      if (_missing.length === 1) _list = _missing[0];
+      else if (_missing.length === 2) _list = _missing[0] + ' and ' + _missing[1];
+      else _list = _missing.slice(0, -1).join(', ') + ', and ' + _missing[_missing.length - 1];
+      vText.innerHTML = '<b>Almost there.</b> Fill in the remaining input' + (_missing.length > 1 ? 's' : '') + ' — <i>' + _list + '</i> — to see how the offer would move your P&L.';
+    } else {
+      vText.innerHTML = '<b>No offer entered yet.</b> Set a <i>commission reduction</i> and a <i>new RoI target</i> (lower than your current RoI) to see how the feature would move your P&L.';
+    }
   } else if (r.margin1 <= 0) {
     vBox.classList.add('bad');
     vText.innerHTML = '<b>Don\'t opt in — margin goes to zero or negative.</b> The offer pushes your profit margin to ' + (r.margin1*100).toFixed(1) + '%, meaning you lose money on every sale. No GMV uplift can justify this — the terms are not viable for your business.';
@@ -1265,6 +1342,33 @@ render();
   }
   window.addEventListener('scroll', checkBottom, { passive:true });
   window.addEventListener('resize', checkBottom);
+})();
+
+// v70: master offer toggle wiring
+(function() {
+  var t = document.getElementById('in_offer_active');
+  if (!t) return;
+  var stage = document.querySelector('.stage.stage-offer');
+  function syncClass() {
+    if (stage) stage.classList.toggle('offer-inactive', !t.checked);
+  }
+  t.addEventListener('change', function() {
+    if (t.checked) {
+      var dc = document.getElementById('in_dc');
+      var r1 = document.getElementById('in_roi1');
+      var b1 = document.getElementById('in_budget1');
+      var ab = document.getElementById('in_auto');
+      if (dc) dc.value = '';
+      if (r1) r1.value = '';
+      if (b1) b1.value = '';
+      if (ab) ab.checked = false;
+    }
+    syncClass();
+    if (typeof render === 'function') render();
+  });
+  t.checked = false;
+  syncClass();
+  if (typeof render === 'function') render();
 })();
 </script>
 </body>
