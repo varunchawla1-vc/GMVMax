@@ -515,9 +515,23 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 #s2 .ck-tip .num.flat { color: #e0e3ea; }
 
 #s2 .check-row .ck-sub { font-size: 11.5px; margin-top: 1px; }
+
+/* ===== Internal-use disclaimer banner (injected) ===== */
+.internal-banner{position:sticky;top:0;z-index:100000;background:linear-gradient(90deg,#b91c1c 0%,#dc2626 50%,#b91c1c 100%);color:#fff;text-align:center;padding:10px 18px;font-family:'Inter',-apple-system,Segoe UI,Roboto,sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;box-shadow:0 2px 10px rgba(0,0,0,.5);border-bottom:2px solid #fca5a5}
+.internal-banner .lbl{display:inline-block;background:#fff;color:#b91c1c;padding:2px 8px;border-radius:4px;margin-right:10px;font-weight:900;letter-spacing:.8px;font-size:11px;vertical-align:middle}
+.internal-banner .msg{vertical-align:middle}
+.internal-banner .sub{display:block;font-weight:500;font-size:11px;opacity:.95;margin-top:2px;letter-spacing:.2px}
+@media(max-width:600px){.internal-banner{font-size:11px;padding:8px 10px}.internal-banner .lbl{font-size:10px}}
+
 </style>
 </head>
 <body>
+<div class="internal-banner" role="alert">
+  <span class="lbl">⚠ INTERNAL USE ONLY</span>
+  <span class="msg">For ByteDance / TikTok internal training &amp; enablement — <u>not</u> to be shared with clients, sellers, or external partners.</span>
+  <span class="sub">Figures are illustrative simulations, not commercial commitments.</span>
+</div>
+
 
 <div class="lark-overlay" id="larkOverlay">
   <div class="card">
