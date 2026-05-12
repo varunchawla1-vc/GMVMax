@@ -106,8 +106,8 @@ body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color
 h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 .subtitle { font-size:15px; color:var(--text-dim); margin-bottom:24px; line-height:1.55; }
 
-.stage { background:var(--card); border:1.5px solid rgba(255,255,255,0.22); border-radius:16px; box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
-  padding:22px; margin-bottom:16px; }
+.stage { background:var(--card); border:1.5px solid rgba(255,255,255,0.22); border-radius:6px; box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+  padding:18px; margin-bottom:16px; }
 .stage h3 { font-size:14px; letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim);
   margin-bottom:12px; font-weight:600; }
 .insight { background:linear-gradient(135deg, rgba(108,92,231,.12), rgba(0,206,201,.08));
@@ -170,8 +170,9 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 
 
 /* Two-column layout */
-.split { display:grid; grid-template-columns:420px 1fr; gap:16px; align-items:center; }
-@media (max-width:980px){ .split{ grid-template-columns:1fr; } }
+.split { display:flex; flex-direction:column; gap:18px; align-items:stretch; }
+.split > div { width:100%; }
+.split > div > .stage:last-child { margin-bottom:0; }
 
 /* Input rows */
 .inrow { display:grid; grid-template-columns:1fr 110px 30px; gap:10px; align-items:center;
@@ -189,13 +190,14 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 .toggle { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;
   padding:10px 12px; border-radius:10px; margin-bottom:6px; background:rgba(108,92,231,.08);
   border:1px solid rgba(108,92,231,.35); }
-.switch { position:relative; width:44px; height:24px; cursor:pointer; }
-.switch input { opacity:0; width:0; height:0; }
-.switch .slider { position:absolute; inset:0; background:#2a2d3a; border-radius:24px; transition:all .25s; }
-.switch .slider:before { content:""; position:absolute; height:18px; width:18px; left:3px; top:3px;
-  background:#fff; border-radius:50%; transition:all .25s; }
+.switch { position:relative; width:38px; height:22px; cursor:pointer; flex:none; display:inline-block; }
+.switch input { opacity:0; width:0; height:0; position:absolute; }
+.switch .slider { position:absolute; inset:0; background:#2a2d3a; border-radius:22px; transition:background .2s; box-shadow: inset 0 1px 2px rgba(0,0,0,.4); }
+.switch .slider:before { content:""; position:absolute; height:16px; width:16px; left:3px; top:3px;
+  background:#fff; border-radius:50%; transition:transform .22s cubic-bezier(.5,1.4,.6,1); box-shadow: 0 1px 3px rgba(0,0,0,.4); }
 .switch input:checked + .slider { background:var(--primary); }
-.switch input:checked + .slider:before { transform:translateX(20px); }
+.switch input:checked + .slider:before { transform:translateX(16px); }
+.stage.stage-offer-b .switch input:checked + .slider { background:var(--offerB); }
 
 /* KPI tiles */
 .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
@@ -416,13 +418,13 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
     0 0 0 1px rgba(0,206,201,0.08) inset,
     0 6px 22px rgba(0,206,201,0.06);
 }
-.stage.stage-offer.offer-inactive { opacity:0.6; }
+.stage.stage-offer.offer-inactive { opacity:1; }
 .stage.stage-offer.offer-inactive .inrow,
 .stage.stage-offer.offer-inactive .toggle,
 .stage.stage-offer.offer-inactive #activation_note,
-.stage.stage-offer.offer-inactive #dc_cap_note { pointer-events:none; filter:grayscale(0.3); }
+.stage.stage-offer.offer-inactive #dc_cap_note { pointer-events:none; }
 .stage.stage-offer.offer-inactive input[type="number"],
-.stage.stage-offer.offer-inactive input[type="checkbox"]:not(#in_offer_active) { pointer-events:none; opacity:0.55; }
+.stage.stage-offer.offer-inactive input[type="checkbox"]:not(#in_offer_active) { pointer-events:none; opacity:1; color:#fff; font-weight:700; }
 .offer-master-toggle {
   display:flex; align-items:center; justify-content:space-between;
   margin:4px 14px 10px; padding:10px 12px;
@@ -523,6 +525,86 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
 .internal-banner .sub{display:block;font-weight:500;font-size:11px;opacity:.95;margin-top:2px;letter-spacing:.2px}
 @media(max-width:600px){.internal-banner{font-size:11px;padding:8px 10px}.internal-banner .lbl{font-size:10px}}
 
+
+/* ===== Offer B (Shop-level TR threshold) — construct ===== */
+:root { --offerB:#a78bfa; --offerB-soft:rgba(167,139,250,.12); --offerB-mid:rgba(167,139,250,.35); }
+.stage.stage-offer-b {
+  background: linear-gradient(180deg, var(--offerB-soft) 0%, rgba(167,139,250,0.03) 60%, var(--card) 100%), var(--card);
+  border-color: var(--offerB-mid);
+  box-shadow: 0 0 0 1px rgba(167,139,250,0.08) inset, 0 6px 22px rgba(167,139,250,0.06);
+}
+.stage.stage-offer-b > h3 { color: var(--offerB); }
+.stage.stage-offer-b.offer-inactive { opacity:1; }
+.stage.stage-offer-b.offer-inactive .inrow,
+.stage.stage-offer-b.offer-inactive .toggle,
+.stage.stage-offer-b.offer-inactive #offerB_meter,
+.stage.stage-offer-b.offer-inactive #offerB_state { pointer-events:none; }
+.stage.stage-offer-b.offer-inactive input[type="number"],
+.stage.stage-offer-b.offer-inactive input[type="checkbox"]:not(#in_offerB_active) { pointer-events:none; opacity:1; color:#fff; font-weight:700; }
+.stage.stage-offer-b.offer-inactive .offer-master-toggle {
+  background: rgba(167,139,250,0.14);
+  border-color: rgba(167,139,250,0.55);
+  opacity: 1;
+  pointer-events: auto;
+  animation: offerBPulse 1.8s ease-in-out infinite;
+}
+.stage.stage-offer-b .offer-master-toggle {
+  background: rgba(167,139,250,0.10);
+  border-color: rgba(167,139,250,0.30);
+}
+.stage.stage-offer-b.offer-inactive .offer-master-toggle .label { color: var(--offerB); }
+@keyframes offerBPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(167,139,250,0.55); border-color: rgba(167,139,250,0.55); }
+  60%  { box-shadow: 0 0 0 10px rgba(167,139,250,0.00); border-color: rgba(167,139,250,0.90); }
+  100% { box-shadow: 0 0 0 0   rgba(167,139,250,0.00); border-color: rgba(167,139,250,0.55); }
+}
+
+/* TR meter */
+#offerB_meter { margin: 8px 14px 4px; padding: 12px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border:1px solid rgba(255,255,255,.06); }
+#offerB_meter .meter-row { display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:6px; letter-spacing:.3px; }
+#offerB_meter .meter-row .now { color:var(--text); font-weight:700; }
+#offerB_meter .meter-row .now.met { color: #51cf66; }
+#offerB_meter .meter-row .now.miss { color: #ff6b6b; }
+#offerB_meter .meter-bar { position:relative; height:14px; background:#1a1d27; border-radius:7px; overflow:hidden; }
+#offerB_meter .meter-bands { position:absolute; inset:0; display:flex; }
+#offerB_meter .meter-bands .b1 { background:rgba(255,107,107,.18); flex:1; }   /* <1% red */
+#offerB_meter .meter-bands .b2 { background:rgba(255,212,59,.18); flex:2; }    /* 1–3% amber */
+#offerB_meter .meter-bands .b3 { background:rgba(81,207,102,.18); flex:2; }    /* >=3% green */
+#offerB_meter .meter-fill {
+  position:absolute; top:0; bottom:0; left:0;
+  background: linear-gradient(90deg, var(--offerB) 0%, #7c4dff 100%);
+  border-radius:7px; transition:width .5s cubic-bezier(.22,1,.36,1);
+  box-shadow: 0 0 8px rgba(167,139,250,.6);
+}
+#offerB_meter .meter-thr {
+  position:absolute; top:-3px; bottom:-3px; width:2px; background:#51cf66;
+  transition:left .3s ease;
+}
+#offerB_meter .meter-thr::after {
+  content: attr(data-label);
+  position:absolute; top:-15px; left:50%; transform:translateX(-50%);
+  font-size:9px; color:#51cf66; font-weight:700; white-space:nowrap; letter-spacing:.4px;
+}
+#offerB_meter .meter-axis { display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-dim); margin-top:5px; opacity:.7; }
+#offerB_state { margin: 6px 14px 4px; padding: 9px 12px; border-radius:6px; font-size:12px; line-height:1.45; font-weight:500; }
+#offerB_state.met  { background: rgba(81,207,102,.10); border-left:3px solid #51cf66; color:#51cf66; }
+#offerB_state.miss { background: rgba(245,166,35,.10); border-left:3px solid #f5a623; color:#f5a623; }
+
+/* Violet KPI accent for Offer B savings */
+.kpi.kpi-b { border-color: var(--offerB-mid); background:linear-gradient(180deg, rgba(167,139,250,.06) 0%, rgba(167,139,250,.01) 100%), var(--card); }
+.kpi.kpi-b .k-lbl { color: var(--offerB); }
+
+/* Stacked savings split bar */
+.savings-split { margin: 10px 14px 4px; padding: 12px 14px; background: rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,.06); }
+.savings-split .ss-title { font-size:11px; color:var(--text-dim); letter-spacing:.4px; text-transform:uppercase; margin-bottom:8px; }
+.savings-split .ss-bar { display:flex; height:24px; border-radius:6px; overflow:hidden; background:#1a1d27; }
+.savings-split .ss-bar .ss-a { background: linear-gradient(90deg, #00cec9 0%, #00b3a4 100%); transition:width .5s ease; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0f1117; }
+.savings-split .ss-bar .ss-b { background: linear-gradient(90deg, var(--offerB) 0%, #7c4dff 100%); transition:width .5s ease; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
+.savings-split .ss-legend { display:flex; gap:14px; margin-top:8px; font-size:11px; color:var(--text-dim); }
+.savings-split .ss-legend span::before { content:""; display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:middle; }
+.savings-split .ss-legend .leg-a::before { background:#00cec9; }
+.savings-split .ss-legend .leg-b::before { background:var(--offerB); }
+
 </style>
 </head>
 <body>
@@ -576,8 +658,9 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
     <p class="subtitle">All values editable.</p>
 
     <div class="split">
-      <!-- LEFT: inputs -->
+      <!-- SECTION A: Baseline -->
       <div>
+        <div class="section-rule"><span class="num">1</span>Baseline · Your business today</div>
         <div class="stage">
           <h3>Your business today</h3>
           <div class="inrow">
@@ -603,9 +686,11 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           </div>
         </div>
 
+<div class="section-rule"><span class="num">2</span>Choose your offer(s) · stack any combination</div>
+        <div class="offers-grid">
         <div class="stage stage-offer">
           <h3 style="display:flex; align-items:center; gap:8px;">
-            The offer
+            Lower RoI goal offer
             <span class="tip-wrap" tabindex="0" aria-label="Where to find these values">
               <span class="tip-icon">i</span>
               <span class="tip-box" role="tooltip">
@@ -630,12 +715,12 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           </div>
           <div class="inrow">
             <div><div class="label">🔻 Platform commission reduction</div></div>
-            <input type="number" id="in_dc" value="" placeholder="1.5" min="0" step="0.1"><div class="unit">pp</div>
+            <input type="number" id="in_dc" value="1.5" placeholder="1.5" min="0" step="0.1"><div class="unit">pp</div>
           </div>
           <div id="dc_cap_note" style="display:none; padding:4px 14px 6px; color:var(--accent2); font-size:11.5px; line-height:1.5;">⚠ Commission reduction can't meet or exceed your current commission — the floor is 0%. Reduction capped at <b id="dc_cap_val"></b> for this calculation.</div>
           <div class="inrow">
             <div><div class="label">🎯 New RoI target</div></div>
-            <input type="number" id="in_roi1" value="" placeholder="4.5" min="0.1" max="10" step="0.1"><div class="unit">×</div>
+            <input type="number" id="in_roi1" value="4.5" placeholder="4.5" min="0.1" max="10" step="0.1"><div class="unit">×</div>
           </div>
           <div style="padding:6px 14px 10px; color:var(--text-dim); font-size:11.5px; line-height:1.5;">
             ↓ RoI reduction: <b id="txt_droi" style="color:var(--accent2)">−2.9×</b> &nbsp;·&nbsp;
@@ -648,7 +733,7 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
               <div class="label">🚀 New daily ads spend</div>
               <div class="hint">Platform offer <span id="mult_callout" class="mult-callout">(enter the value shown in TTAM for this campaign)</span></div>
             </div>
-            <input type="number" id="in_budget1" value="" placeholder="2000" min="1000" step="100"><div class="unit">$</div>
+            <input type="number" id="in_budget1" value="1500" placeholder="1500" min="1000" step="100"><div class="unit">$</div>
           </div>
           <div class="toggle">
             <div>
@@ -658,10 +743,70 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
           </div>
           <div id="activation_note" style="margin:8px 14px 4px; padding:8px 12px; background:rgba(245,166,35,0.08); border-left:3px solid #f5a623; border-radius:6px; color:#f5a623; font-size:11.5px; line-height:1.45; font-style:normal; font-weight:500; display:none;"><span style="margin-right:6px;">⚠️</span>New spend must be ≥ budget shown in TTAM offer.</div>
         </div>
+
+        <div class="stage stage-offer-b offer-inactive">
+          <h3 style="display:flex; align-items:center; gap:8px;">
+            Increase TR offer
+            <span class="tip-wrap" tabindex="0" aria-label="Where to find these values">
+              <span class="tip-icon">i</span>
+              <span class="tip-box" role="tooltip">
+                <span class="tip-title">💡 Where do I find these numbers?</span>
+                <span class="tip-text">
+                  This is the <b>shop-level commission waiver</b> from the Commission savings via GMV Max policy.
+                  Find your <b>L30D shop-wide ad TR</b> in <b>Seller Center → Ads → Commission Savings via GMV Max</b> historical data
+                  (the same module shown here). When your TR meets the threshold (typically <b>3%</b>),
+                  the platform commission waiver applies <b>shop-wide</b>.
+                </span>
+                <img class="tip-img" src="https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/440b1289453e4eb3bef6b289320c42cc.png~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1873166400&x-orig-sign=FXcswK%2BWZQ23w%2BHnRsamTGyXxHI%3D" alt="Seller Center waiver view" loading="lazy"/>
+              </span>
+            </span>
+          </h3>
+          <div class="offer-master-toggle">
+            <div>
+              <div class="label">Offer active</div>
+              <div class="hint-sm">Toggle on to model an offer. Metrics stay at baseline until all inputs are filled.</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="in_offerB_active"><span class="slider"></span></label>
+          </div>
+
+          <div class="inrow">
+            <div><div class="label">📊 Current L30D shop ad TR</div><div class="hint">From Seller Center historical view</div></div>
+            <input type="number" id="in_trcur" value="1.5" placeholder="1.5" min="0" max="100" step="0.1"><div class="unit">%</div>
+          </div>
+          <div class="inrow">
+            <div><div class="label">🎯 TR threshold to unlock</div><div class="hint">Typically 3% for shop-wide waiver</div></div>
+            <input type="number" id="in_trthr" value="3.0" placeholder="3.0" min="0" max="100" step="0.1"><div class="unit">%</div>
+          </div>
+          <div class="inrow">
+            <div><div class="label">💸 New daily ad spend</div><div class="hint">What you'll spend to push TR above threshold</div></div>
+            <input type="number" id="in_spendB" value="1500" placeholder="1500" min="0" step="100"><div class="unit">$</div>
+          </div>
+          <div class="inrow">
+            <div><div class="label">🔻 Platform commission reduction</div><div class="hint">Shop-wide waiver % once threshold is met</div></div>
+            <input type="number" id="in_dcB" value="1.10" placeholder="1.10" min="0" step="0.01"><div class="unit">pp</div>
+          </div>
+
+          <div id="offerB_meter">
+            <div class="meter-row">
+              <span>Implied new TR <span class="now" id="ob_tr_now">—</span></span>
+              <span>Threshold <b id="ob_tr_thr">3.0%</b></span>
+            </div>
+            <div class="meter-bar">
+              <div class="meter-bands"><div class="b1"></div><div class="b2"></div><div class="b3"></div></div>
+              <div class="meter-fill" id="ob_meter_fill" style="width:0%"></div>
+              <div class="meter-thr" id="ob_meter_thr" data-label="THRESHOLD" style="left:60%"></div>
+            </div>
+            <div class="meter-axis"><span>0%</span><span>1%</span><span>3%</span><span>5%</span></div>
+          </div>
+
+          <div id="offerB_state" class="miss" style="display:none;">⚠ Toggle on and fill the inputs to see whether the Increase-TR offer unlocks.</div>
+        </div>
+        </div>  <!-- offers-grid -->
       </div>
 
-      <!-- RIGHT: live outputs -->
+      <!-- SECTION C: P&L impact -->
       <div>
+        <div class="section-rule"><span class="num">3</span>P&amp;L impact · live</div>
         <!-- Live KPIs -->
         <div class="stage">
           <h3>📊 Your P&amp;L — live</h3>
@@ -750,7 +895,20 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
       </div>
     </div>
 
-    <!-- Full-width "In plain English" block spans both columns of the section -->
+    
+        <!-- Stacked savings split (Offer A + Offer B) -->
+        <div class="stage" id="savings_split" style="display:none;">
+          <div class="savings-split">
+            <div class="ss-title">Daily commission savings · Lower-RoI + Increase-TR = <b id="ss_sum" style="color:#fff; font-variant-numeric:tabular-nums;">$0/day</b></div>
+            <div class="ss-bar"><div class="ss-a" id="ss_a" style="width:0%"></div><div class="ss-b" id="ss_b" style="width:0%"></div></div>
+            <div class="ss-legend">
+              <span class="leg-a">Lower RoI goal offer</span>
+              <span class="leg-b">Increase TR offer</span>
+            </div>
+          </div>
+        </div>
+
+      <!-- Full-width "In plain English" block spans both columns of the section -->
     <div class="insight" id="tradeInsight"></div>
   </div>
 </section>
@@ -824,6 +982,57 @@ h2 { font-size:clamp(24px,3.2vw,34px); font-weight:800; margin-bottom:10px; }
     padding-left: 20px;
   }
   .disclaimer-footer li { margin: 3px 0; }
+
+/* ===== Offers grid (Option C) — two side-by-side offer cards on wide viewports ===== */
+.offers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+.offers-grid > .stage { margin: 0; height:100%; }
+.offers-grid > .stage.stage-offer,
+.offers-grid > .stage.stage-offer-b {
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+.offers-grid > .stage > h3 { margin-bottom: 10px; }
+@media (max-width: 900px) {
+  .offers-grid { grid-template-columns: 1fr; }
+}
+/* squarer KPI tiles */
+.kpi { border-radius: 6px !important; }
+.inrow { border-radius: 4px !important; }
+.insight { border-radius: 6px !important; }
+#offerB_meter, #offerB_state, .savings-split, .offer-master-toggle { border-radius: 6px !important; }
+.savings-split .ss-bar, .savings-split .ss-bar > * { border-radius: 0 !important; }
+
+/* ===== 3-section vertical structure ===== */
+.section-rule { font-size:11px; letter-spacing:1.6px; text-transform:uppercase; color:var(--text-dim); margin:8px 2px 10px; font-weight:700; opacity:.85; }
+.section-rule .num { display:inline-block; width:22px; height:22px; line-height:22px; text-align:center; background:rgba(108,92,231,.18); border:1px solid rgba(108,92,231,.45); border-radius:4px; color:#fff; margin-right:8px; font-weight:800; }
+
+/* === Offer input state styling: greyed when off, bold white when on === */
+.stage.stage-offer:not(.offer-inactive) .inrow input[type="number"],
+.stage.stage-offer-b:not(.offer-inactive) .inrow input[type="number"] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.stage.stage-offer.offer-inactive .inrow input[type="number"],
+.stage.stage-offer-b.offer-inactive .inrow input[type="number"] {
+  color: var(--text-dim) !important;
+  font-weight: 400 !important;
+  opacity: 0.55 !important;
+  -webkit-text-fill-color: var(--text-dim) !important;
+  pointer-events: none;
+}
+.stage.stage-offer.offer-inactive .inrow,
+.stage.stage-offer-b.offer-inactive .inrow {
+  opacity: 0.7;
+}
 </style>
 
 <footer class="disclaimer-footer">
@@ -898,7 +1107,17 @@ function read(){
     offerActive: _offerActive,
     _dcRaw: ($('in_dc').value || '').trim(),
     _roi1Raw: ($('in_roi1').value || '').trim(),
-    _budget1Raw: ($('in_budget1').value || '').trim()
+    _budget1Raw: ($('in_budget1').value || '').trim(),
+    // ----- Offer B (/ shop-level TR threshold) -----
+    offerBActive: !!($('in_offerB_active') && $('in_offerB_active').checked),
+    trCur:    (+$('in_trcur').value || 0) / 100,
+    trThr:    (+($('in_trthr').value || '3')) / 100,
+    spendB:   +$('in_spendB').value || 0,
+    dcB:      (+$('in_dcB').value   || 0) / 100,
+    _trCurRaw:  ($('in_trcur').value || '').trim(),
+    _trThrRaw:  ($('in_trthr').value || '').trim(),
+    _spendBRaw: ($('in_spendB').value || '').trim(),
+    _dcBRaw:    ($('in_dcB').value   || '').trim()
   };
 }
 
@@ -951,6 +1170,43 @@ function compute(){
   var margin0 = x.gmv0 ? profit0/x.gmv0 : 0;
   var margin1 = gmv1   ? profit1/gmv1   : 0;
 
+  // ===== Offer B (shop-level TR threshold) =====
+  // Required inputs filled?
+  var bReqOk = x.offerBActive && x._trCurRaw !== '' && x._spendBRaw !== '' && x._dcBRaw !== '' && x.spendB > 0;
+  var bLive  = !!bReqOk;
+  // Implied new TR = new ad spend / new shop GMV.
+  // New shop GMV under Offer B = spendB * (current shop RoI proxy = roi0)
+  // (Assumes the seller commits the spend at the same RoI; conservative.)
+  var bGmv = bLive ? x.spendB * x.roi0 : x.gmv0;
+  var bImpliedTR = (bLive && bGmv > 0) ? (x.spendB / bGmv) : x.adsTR0;
+  // Note: with same roi0, impliedTR === adsTR0 = 1/roi0. But we expose explicit field for future flex.
+  // Unlock rule: gate purely on the seller''''s reported L30D shop ad TR.
+  // The 'New daily ad spend' is the seller''''s commitment to maintain that TR
+  // and drive the qualifying GMV — it does NOT itself unlock the offer.
+  // Per policy: shop must MAINTAIN TR ≥ threshold to keep the waiver active.
+  var bUnlocked = bLive && (x.trCur >= x.trThr);
+
+  // Capping rule: A's reduction + B's reduction can't exceed original commission rate.
+  var dcA_eff = dcEff;                                           // already clamped to c0
+  var dcB_eff = bUnlocked ? Math.min(x.dcB, Math.max(0, x.c0 - dcA_eff)) : 0;
+  var dcCombinedCapped = (x.dcB > 0) && bUnlocked && (dcA_eff + x.dcB > x.c0 + 1e-9);
+
+  // Offer B savings = dcB_eff applied to the *full shop GMV* (overlap allowed).
+  // NB: A already reduces commission on its own GMV-Max-campaign GMV (via c1).
+  // For B we apply on bGmv (= spendB * roi0 when live, else gmv0). $ savings vs no-Offer-B baseline.
+  var bSavings = bUnlocked ? (bGmv * dcB_eff) : 0;
+
+  // Offer A savings (in $) = (c0 - c1) * gmv1
+  var aSavings = (x.c0 - c1) * gmv1;
+
+  // Combined effective profit (B layered on top of A's already-recomputed P&L).
+  // Profit_combined = profit1 (already includes A) + bSavings (assumes the saved commission stays as profit).
+  // NB: When B is on, we *also* uplift GMV to bGmv — but only if bGmv > gmv1 (don't double count A's GMV).
+  var gmvCombined = Math.max(gmv1, bGmv);
+  var profitCombined = profit1 + bSavings;
+  var marginCombined = gmvCombined ? profitCombined / gmvCombined : 0;
+  var spendCombined  = Math.max(spend1, bLive ? x.spendB : x.cost0);
+
   return {
     x:x,
     qualifies: qualifies,
@@ -960,13 +1216,19 @@ function compute(){
     c1Proposed: c1IN,
     adsTR0:adsTR0, adsTR1:adsTR1, c1:c1, roi1:roi1, spend1:spend1, gmv1:gmv1,
     profit0:profit0, profit1:profit1, margin0:margin0, margin1:margin1,
-    dGMV:    x.gmv0 ? (gmv1/x.gmv0 - 1)*100 : 0,
-    dProfit: profit0 ? (profit1/profit0 - 1)*100 : 0,
-    dMargin: (margin1 - margin0) * 100,
+    dGMV:    x.gmv0 ? (gmvCombined/x.gmv0 - 1)*100 : 0,
+    dProfit: profit0 ? (profitCombined/profit0 - 1)*100 : 0,
+    dMargin: (marginCombined - margin0) * 100,
     dRoI:    x.roi0 ? (roi1/x.roi0 - 1)*100 : 0,
-    dBudget: x.cost0 ? (spend1/x.cost0 - 1)*100 : 0,
-    profitDelta: profit1 - profit0,
-    spendDelta:  spend1 - x.cost0
+    dBudget: x.cost0 ? (spendCombined/x.cost0 - 1)*100 : 0,
+    profitDelta: profitCombined - profit0,
+    spendDelta:  spendCombined - x.cost0,
+    // === Offer B exposure ===
+    bLive: bLive, bUnlocked: bUnlocked, bImpliedTR: bImpliedTR, trCur: x.trCur,
+    bGmv: bGmv, bSavings: bSavings, aSavings: aSavings,
+    dcA_eff: dcA_eff, dcB_eff: dcB_eff, dcCombinedCapped: dcCombinedCapped,
+    gmvCombined: gmvCombined, profitCombined: profitCombined,
+    marginCombined: marginCombined, spendCombined: spendCombined
   };
 }
 
@@ -1036,10 +1298,12 @@ function render(){
         }
       }
     }
-    // Activation note: show only when Auto Budget is OFF (reminds user the actual eligibility comes from TTAM)
+    // Activation note: only show when manual budget is BELOW current daily spend (a real constraint violation)
     var noteEl = document.getElementById('activation_note');
     if (noteEl) {
-      noteEl.style.display = autoOn ? 'none' : 'block';
+      var b = +document.getElementById('in_budget1').value || 0;
+      var c = +document.getElementById('in_cost').value || 0;
+      noteEl.style.display = (!autoOn && b > 0 && b < c) ? 'block' : 'none';
     }
   })();
   var r = compute(), x = r.x;
@@ -1075,11 +1339,11 @@ function render(){
   $('in_gmv_display').textContent = money(x.gmv0);
 
   // KPI tiles
-  setKPI('gmv',    money(r.gmv1),                    r.dGMV,    false, true);
-  setKPI('profit', money(r.profit1),                 r.dProfit, false, true);
-  setKPI('margin', (r.margin1*100).toFixed(1) + '%', r.dMargin, true,  true);
+  setKPI('gmv',    money(r.gmvCombined || r.gmv1),                                          r.dGMV,    false, true);
+  setKPI('profit', money(r.profitCombined !== undefined ? r.profitCombined : r.profit1),       r.dProfit, false, true);
+  setKPI('margin', (((r.marginCombined !== undefined ? r.marginCombined : r.margin1)*100).toFixed(1)) + '%', r.dMargin, true,  true);
   setKPI('roi',    isFinite(r.roi1)?r.roi1.toFixed(1)+'×':'∞', r.dRoI, false, true);
-  setKPI('budget', money(r.spend1),                  r.dBudget, false, true);
+  setKPI('budget', money(r.spendCombined || r.spend1),                                         r.dBudget, false, true);
 
   // update "vs" text with baselines
   $('d_gmv').textContent    = (r.dGMV>=0?'▲ +':'▼ ') + r.dGMV.toFixed(1) + '% vs ' + money(x.gmv0);
@@ -1092,6 +1356,76 @@ function render(){
   ['kpi_gmv','kpi_profit','kpi_margin','kpi_roi','kpi_budget'].forEach(function(id){
     var el = $(id); el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
   });
+
+  // ===== Offer B live UI updates (TR meter + state pill + savings split) =====
+  (function(){
+    var trnow  = $('ob_tr_now');
+    var trthr  = $('ob_tr_thr');
+    var fill   = $('ob_meter_fill');
+    var thr    = $('ob_meter_thr');
+    var stateE = $('offerB_state');
+    if (!trnow || !fill || !thr || !stateE) return;
+
+    var bLive = !!r.bLive;
+    var trN   = (r.trCur || 0) * 100;
+    var thrV  = (x.trThr || 0.03) * 100;
+
+    // Meter scale: 0–5% (cap visual at 5)
+    var maxScale = 5;
+    var pct = Math.min(100, Math.max(0, (trN / maxScale) * 100));
+    var thrPct = Math.min(100, Math.max(0, (thrV / maxScale) * 100));
+    fill.style.width = pct + '%';
+    thr.style.left   = thrPct + '%';
+    trthr.textContent = thrV.toFixed(1) + '%';
+
+    if (!bLive) {
+      trnow.textContent = '—';
+      trnow.classList.remove('met','miss');
+      stateE.style.display = 'block';
+      stateE.className = 'miss';
+      stateE.innerHTML = '⚠ Toggle on and fill the inputs to see whether the Increase-TR offer unlocks.';
+      return;
+    }
+    trnow.textContent = trN.toFixed(2) + '%';
+    if (r.bUnlocked) {
+      trnow.classList.remove('miss'); trnow.classList.add('met');
+      stateE.style.display = 'block';
+      stateE.className = 'met';
+      var capNote = r.dcCombinedCapped
+        ? ' <span style="opacity:.85;">(Combined reduction capped at your current commission — both offers cannot exceed it.)</span>'
+        : '';
+      stateE.innerHTML = '✓ Offer unlocked — shop-wide commission reduction applies. ' +
+        'Daily savings ≈ <b>$' + Math.round(r.bSavings).toLocaleString() + '</b>' + capNote;
+    } else {
+      trnow.classList.remove('met'); trnow.classList.add('miss');
+      stateE.style.display = 'block';
+      stateE.className = 'miss';
+      var gap = (thrV - trN);
+      stateE.innerHTML = '⚠ Offer not unlocked — your L30D TR is <b>' + trN.toFixed(2) + '%</b>, need <b>' + thrV.toFixed(2) + '%</b> ' +
+        '(gap: <b>' + (gap>0?gap.toFixed(2):'0.00') + 'pp</b>). Increase the committed spend, or lower the threshold.';
+    }
+
+    // Savings split bar (Offer A vs Offer B)
+    var ssWrap = $('savings_split');
+    if (ssWrap) {
+      var aS = Math.max(0, r.aSavings || 0);
+      var bS = Math.max(0, r.bSavings || 0);
+      var tot = aS + bS;
+      if (tot < 0.5) {
+        ssWrap.style.display = 'none';
+      } else {
+        ssWrap.style.display = '';
+        var aPct = (aS / tot) * 100;
+        var bPct = 100 - aPct;
+        var aEl = $('ss_a'), bEl = $('ss_b');
+        if (aEl) { aEl.style.width = aPct.toFixed(1) + '%'; aEl.textContent = aPct >= 12 ? ('A · $' + Math.round(aS).toLocaleString()) : ''; }
+        if (bEl) { bEl.style.width = bPct.toFixed(1) + '%'; bEl.textContent = bPct >= 12 ? ('B · $' + Math.round(bS).toLocaleString()) : ''; }
+        var sumEl = $('ss_sum');
+        if (sumEl) sumEl.textContent = '$' + Math.round(tot).toLocaleString() + '/day';
+      }
+    }
+  })();
+
 
   // Unified dashboard (bars + numbers)
   buildDashBars(r);
@@ -1150,12 +1484,19 @@ function render(){
   //   LIVE:          offer is active.
   var NOT_QUALIFIED = false; // deprecated: eligibility is now campaign-specific (TTAM), not a hard 2× floor
   // v71: distinguish OFF (toggle off) from INCOMPLETE (toggle on but missing inputs) from NEUTRAL (legacy)
-  var OFFER_OFF = !x.offerActive;
+  var OFFER_OFF = !x.offerActive && !x.offerBActive;
   var _hasDc = (x._dcRaw !== '' && (+x._dcRaw) > 0);
   var _hasRoi = (x._roi1Raw !== '');
   var _hasBudget = (x._budget1Raw !== '' && (+x._budget1Raw) > 0);
   var INCOMPLETE = x.offerActive && !(_hasDc && _hasRoi && (x.auto || (_hasBudget && (+x._budget1Raw) >= x.cost0)));
-  var NEUTRAL = OFFER_OFF || INCOMPLETE || ((x.dc === 0) && (Math.abs(x.roi0 - r.roi1Proposed) < 1e-6));
+  var B_CONTRIBUTES = !!r.bUnlocked;  // Offer B is producing real savings
+  var A_INCOMPLETE = INCOMPLETE;
+  var A_OFF = !x.offerActive;
+  // Neutral only when there is no contribution from EITHER offer.
+  var NEUTRAL = (OFFER_OFF) || (
+                  (A_OFF || A_INCOMPLETE || ((x.dc === 0) && (Math.abs(x.roi0 - r.roi1Proposed) < 1e-6)))
+                  && !B_CONTRIBUTES
+                );
 
   // Absolute dollar deltas are always reliable; percentage deltas are not when baseline is <=0 or 0.
   var absProfitDelta = r.profitDelta;                // $/day
@@ -1254,8 +1595,11 @@ function render(){
   } else if (NEUTRAL) {
     vBox.classList.add('warn');
     if (OFFER_OFF) {
-      vText.innerHTML = '<b>Offer is off.</b> Toggle <i>Offer active</i> on and enter your offer details to see how the feature would move your P&L.';
-    } else if (INCOMPLETE) {
+      vText.innerHTML = '<b>No offer is active.</b> Toggle on either <i>Lower RoI goal offer</i> or <i>Increase TR offer</i> (or both) to see how the offer would move your P&L.';
+    } else if (x.offerBActive && !x.offerActive && !B_CONTRIBUTES) {
+      // Only Offer B on but it's not unlocked
+      vText.innerHTML = '<b>Increase-TR offer not unlocked.</b> Your L30D shop ad TR (' + (x.trCur*100).toFixed(2) + '%) is below the threshold of <b>' + (x.trThr*100).toFixed(2) + '%</b>. Raise the TR (or adjust the threshold) to activate the shop-wide commission waiver.';
+    } else if (INCOMPLETE && !B_CONTRIBUTES) {
       var _missing = [];
       if (!_hasDc) _missing.push('commission reduction');
       if (!_hasRoi) _missing.push('new RoI target');
@@ -1267,9 +1611,9 @@ function render(){
       if (_missing.length === 1) _list = _missing[0];
       else if (_missing.length === 2) _list = _missing[0] + ' and ' + _missing[1];
       else _list = _missing.slice(0, -1).join(', ') + ', and ' + _missing[_missing.length - 1];
-      vText.innerHTML = '<b>Almost there.</b> Fill in the remaining input' + (_missing.length > 1 ? 's' : '') + ' — <i>' + _list + '</i> — to see how the offer would move your P&L.';
+      vText.innerHTML = '<b>Almost there.</b> Fill in the remaining input' + (_missing.length > 1 ? 's' : '') + ' for the Lower-RoI offer — <i>' + _list + '</i> — to see how the offer would move your P&L.';
     } else {
-      vText.innerHTML = '<b>No offer entered yet.</b> Set a <i>commission reduction</i> and a <i>new RoI target</i> (lower than your current RoI) to see how the feature would move your P&L.';
+      vText.innerHTML = '<b>No offer entered yet.</b> Set a <i>commission reduction</i> and a <i>new RoI target</i> (lower than your current RoI), or unlock the <i>Increase TR</i> offer.';
     }
   } else if (r.margin1 <= 0) {
     vBox.classList.add('bad');
@@ -1358,6 +1702,24 @@ render();
   window.addEventListener('resize', checkBottom);
 })();
 
+// Offer B master toggle wiring
+(function() {
+  var tb = document.getElementById('in_offerB_active');
+  if (!tb) return;
+  var stageB = document.querySelector('.stage.stage-offer-b');
+  function syncB() { if (stageB) stageB.classList.toggle('offer-inactive', !tb.checked); }
+  tb.addEventListener('change', function(){ syncB(); if (typeof render === 'function') render(); });
+  syncB();
+})();
+// Bind Offer B inputs to render
+(function(){
+  ['in_trcur','in_trthr','in_spendB','in_dcB'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function(){ if (typeof render === 'function') render(); });
+    el.addEventListener('change', function(){ if (typeof render === 'function') render(); });
+  });
+})();
 // v70: master offer toggle wiring
 (function() {
   var t = document.getElementById('in_offer_active');
@@ -1367,16 +1729,7 @@ render();
     if (stage) stage.classList.toggle('offer-inactive', !t.checked);
   }
   t.addEventListener('change', function() {
-    if (t.checked) {
-      var dc = document.getElementById('in_dc');
-      var r1 = document.getElementById('in_roi1');
-      var b1 = document.getElementById('in_budget1');
-      var ab = document.getElementById('in_auto');
-      if (dc) dc.value = '';
-      if (r1) r1.value = '';
-      if (b1) b1.value = '';
-      if (ab) ab.checked = false;
-    }
+    // NOTE: do not wipe the input values on toggle change — preserve user/default values
     syncClass();
     if (typeof render === 'function') render();
   });
@@ -1384,6 +1737,64 @@ render();
   syncClass();
   if (typeof render === 'function') render();
 })();
+
+// === Sync New daily ad spend between Offer A and Offer B when both are ON ===
+(function(){
+  function syncSpendInputs(){
+    var aOn = document.getElementById('in_offer_active') && document.getElementById('in_offer_active').checked;
+    var bOn = document.getElementById('in_offerB_active') && document.getElementById('in_offerB_active').checked;
+    var aIn = document.getElementById('in_budget1');
+    var bIn = document.getElementById('in_spendB');
+    if (!aIn || !bIn) return;
+    if (aOn && bOn) {
+      // Mirror A → B, lock B
+      if (aIn.value !== '') bIn.value = aIn.value;
+      bIn.disabled = true;
+      bIn.title = 'Synced with Lower-RoI offer · New daily ad spend';
+      bIn.style.opacity = '0.65';
+      bIn.style.cursor = 'not-allowed';
+    } else {
+      bIn.disabled = false;
+      bIn.title = '';
+      bIn.style.opacity = '';
+      bIn.style.cursor = '';
+    }
+  }
+  function bind(){
+    ['in_offer_active','in_offerB_active','in_budget1'].forEach(function(id){
+      var e = document.getElementById(id);
+      if (e) e.addEventListener('input', function(){ syncSpendInputs(); if (typeof render==='function') render(); });
+      if (e) e.addEventListener('change', function(){ syncSpendInputs(); if (typeof render==='function') render(); });
+    });
+    syncSpendInputs();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
+
+
+// === Ensure offer defaults are populated and applied on load ===
+(function ensureDefaults(){
+  var defaults = {
+    in_dc:      '1.5',
+    in_roi1:    '4.5',
+    in_budget1: '1500',
+    in_trcur:   '1.5',
+    in_trthr:   '3.0',
+    in_spendB:  '1500',
+    in_dcB:     '1.10'
+  };
+  function apply(){
+    Object.keys(defaults).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && (el.value === '' || el.value == null)) el.value = defaults[id];
+    });
+    if (typeof render === 'function') render();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
+  else apply();
+})();
+
 </script>
 </body>
 </html>
