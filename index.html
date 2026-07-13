@@ -1143,12 +1143,13 @@ function compute(){
   var dcCapped = x.dc > x.c0 + 1e-9;
 
   // Proposed new spend (what the client has set up in Step 1).
-  // Auto Budget ON → conservative 1.5× placeholder (AB can lift 50–300% depending on campaign; 50% is the floor).
+  // Auto Budget ON → use the entered New daily ad spend, floored at 1.5× current
+  //   (anything below the 1.5× floor is treated as 1.5×).
   // Auto Budget OFF → whatever the user entered, floored at current daily spend (can't go lower).
   var AB_CONSERVATIVE = 1.5;
   var spend1Proposed;
   if (x.auto) {
-    spend1Proposed = AB_CONSERVATIVE * x.cost0;
+    spend1Proposed = Math.max(AB_CONSERVATIVE * x.cost0, x.budget1);
   } else {
     spend1Proposed = Math.max(x.cost0, x.budget1);
   }
@@ -1276,11 +1277,18 @@ function render(){
     var inp = $('in_budget1');
     if (el) {
       if (autoOn) {
-        // Auto Budget ON: manual entry ignored, conservative 1.5× placeholder (AB lifts 50–300%)
-        var effBudget = c > 0 ? 1.5 * c : 0;
-        el.innerHTML = '(Auto Budget ON — assumed $' + effBudget.toLocaleString() + ' = 1.5× current; <span style="opacity:0.75;">AB can lift 50–300%</span>)';
+        // Auto Budget ON: use entered spend, floored at 1.5× current.
+        var floorBudget = c > 0 ? 1.5 * c : 0;
+        var effBudget = Math.max(floorBudget, b);
+        if (inp) { inp.disabled = false; inp.style.opacity = '1'; }
+        if (c <= 0) {
+          el.textContent = '';
+        } else if (b >= floorBudget && b > 0) {
+          el.innerHTML = '(Auto Budget ON — using your $' + effBudget.toLocaleString() + ' = ' + (effBudget / c).toFixed(2) + '× current)';
+        } else {
+          el.innerHTML = '(Auto Budget ON — floored at $' + floorBudget.toLocaleString() + ' = 1.5× current; your entry was below the floor)';
+        }
         el.style.color = 'var(--accent)';
-        if (inp) { inp.disabled = true; inp.style.opacity = '0.5'; }
       } else {
         if (inp) { inp.disabled = false; inp.style.opacity = '1'; }
         // Enforce floor: new spend cannot be lower than current daily spend.
@@ -1312,9 +1320,14 @@ function render(){
   var mSrc = $('budget_src');
   if (!mSrc) mSrc = { textContent: '' };
   if (x.auto) {
-    $('in_budget1').disabled = true;
-    $('row_mult').style.opacity = '.5';
-    mSrc.textContent = '(Auto Budget ON — platform spends up to the 2× floor to hit new RoI target)';
+    $('in_budget1').disabled = false;
+    $('row_mult').style.opacity = '1';
+    var _c = x.cost0, _b = x.budget1, _floor = 1.5 * _c;
+    if (_b >= _floor) {
+      mSrc.textContent = '(Auto Budget ON — using your new daily ad spend $' + _b.toLocaleString() + ' = ' + (_c>0?(_b/_c).toFixed(1):'?') + '× current)';
+    } else {
+      mSrc.textContent = '(Auto Budget ON — your entry $' + _b.toLocaleString() + ' is below the 1.5× floor, so using $' + _floor.toLocaleString() + ' = 1.5× current)';
+    }
   } else {
     $('in_budget1').disabled = false;
     $('row_mult').style.opacity = '1';
